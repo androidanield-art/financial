@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useFinancial } from './FinancialContext';
 import { motion } from 'framer-motion';
-import { Plus, Trash2, Calendar, User, Briefcase, DollarSign, Pencil, X } from 'lucide-react';
+import { Plus, Trash2, Calendar, User, Briefcase, DollarSign, Pencil, X, CheckCircle2 } from 'lucide-react';
 import Card from './Card';
 
 const EntriesPage = () => {
@@ -11,7 +11,7 @@ const EntriesPage = () => {
     client: '',
     service: '',
     value: '',
-    date: new Date().toISOString().split('T')[0],
+    date: new Date().toLocaleDateString('en-CA'),
     status: 'A receber'
   });
 
@@ -21,7 +21,7 @@ const EntriesPage = () => {
       client: rev.client,
       service: rev.service || '',
       value: rev.value,
-      date: rev.date,
+      date: rev.date.split('T')[0],
       status: rev.status
     });
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -143,7 +143,29 @@ const EntriesPage = () => {
                     {rev.status}
                   </span>
                 </div>
-                {/* Botão de deletar (opcional) */}
+                <div className="flex items-center gap-2">
+                  {rev.status === 'A receber' && (
+                    <button 
+                      onClick={() => updateRevenue(rev.id, { status: 'Recebido' })}
+                      className="p-2 text-slate-700 hover:text-emerald-500 transition-colors"
+                      title="Marcar como recebido"
+                    >
+                      <CheckCircle2 size={18} />
+                    </button>
+                  )}
+                  <button 
+                    onClick={() => handleEdit(rev)}
+                    className="p-2 text-slate-700 hover:text-indigo-400 transition-colors"
+                  >
+                    <Pencil size={16} />
+                  </button>
+                  <button 
+                    onClick={() => deleteRevenue(rev.id)}
+                    className="p-2 text-slate-700 hover:text-rose-500 transition-colors"
+                  >
+                    <Trash2 size={16} />
+                  </button>
+                </div>
               </div>
             </motion.div>
           ))}
