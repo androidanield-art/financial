@@ -15,7 +15,7 @@ const Sidebar = () => {
     }`;
 
   return (
-    <aside className="w-64 bg-[#080808] border-r border-white/5 p-6 flex flex-col h-screen sticky top-0 z-20">
+    <aside className="w-64 bg-[#080808] border-r border-white/5 p-6 flex flex-col h-screen fixed left-0 top-0 z-20">
       <div className="flex items-center gap-3 px-2 mb-10">
         <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-violet-600 rounded-xl flex items-center justify-center shadow-lg">
           <Wallet className="text-white w-6 h-6" />

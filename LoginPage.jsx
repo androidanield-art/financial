@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { supabase } from './supabase';
 import { motion } from 'framer-motion';
-import { Wallet, ArrowRight, Sparkles, Mail, Lock, Loader2 } from 'lucide-react';
+import { Wallet, ArrowRight, Sparkles, Mail, Lock, Loader2, Wifi, WifiOff } from 'lucide-react';
+import { useFinancial } from './FinancialContext';
 
 const LoginPage = () => {
+  const { connectionStatus } = useFinancial();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -27,9 +29,9 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="fixed inset-0 w-screen h-screen flex items-center justify-center bg-[#050505] overflow-hidden px-4 z-[9999]">
+    <div className="fixed inset-0 w-full h-full flex items-center justify-center bg-[#050505] overflow-hidden px-4 z-[9999]">
       {/* Ambient Lighting */}
-      <div className="absolute top-0 left-0 w-full h-full pointer-events-none">
+      <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-indigo-600/10 blur-[120px] rounded-full" />
         <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-violet-600/10 blur-[120px] rounded-full" />
       </div>
@@ -48,6 +50,22 @@ const LoginPage = () => {
           </motion.div>
           <h1 className="text-4xl font-black text-white tracking-tight mb-2">MEI Finance</h1>
           <p className="text-slate-400 font-medium">Gestão profissional para mentes criativas.</p>
+          
+          <div className="mt-4 flex justify-center">
+            {connectionStatus === 'online' ? (
+              <span className="flex items-center gap-2 text-[10px] font-bold text-emerald-500 uppercase tracking-widest bg-emerald-500/10 px-3 py-1 rounded-full">
+                <Wifi size={12} /> Conectado ao Banco
+              </span>
+            ) : connectionStatus === 'offline' ? (
+              <span className="flex items-center gap-2 text-[10px] font-bold text-rose-500 uppercase tracking-widest bg-rose-500/10 px-3 py-1 rounded-full">
+                <WifiOff size={12} /> Erro de Conexão
+              </span>
+            ) : (
+              <span className="flex items-center gap-2 text-[10px] font-bold text-slate-500 uppercase tracking-widest bg-slate-500/10 px-3 py-1 rounded-full animate-pulse">
+                Verificando Banco...
+              </span>
+            )}
+          </div>
         </div>
 
         <div className="bg-[#0f0f0f] border border-white/5 rounded-[2.5rem] p-8 shadow-3xl">

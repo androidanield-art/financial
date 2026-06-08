@@ -22,7 +22,7 @@ const DashboardPage = () => {
     new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
 
   return (
-    <div className="w-full space-y-10">
+    <div className="w-full max-w-6xl space-y-10">
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
           <p className="text-indigo-500 font-bold text-sm uppercase tracking-widest mb-2">Visão Geral</p>

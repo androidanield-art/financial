@@ -7,6 +7,7 @@ const FinancialContext = createContext();
 export const FinancialProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [connectionStatus, setConnectionStatus] = useState('checking'); // 'checking', 'online', 'offline'
   const [revenues, setRevenues] = useState([]);
   const [expenses, setExpenses] = useState([]);
   const [commitments, setCommitments] = useState([]);
@@ -22,8 +23,13 @@ export const FinancialProvider = ({ children }) => {
   useEffect(() => {
     const initAuth = async () => {
       try {
-        const { data: { session } } = await supabase.auth.getSession();
+        const { data: { session }, error } = await supabase.auth.getSession();
+        if (error) throw error;
         setUser(session?.user ?? null);
+        setConnectionStatus('online');
+      } catch (err) {
+        console.error("Erro de conexão Supabase:", err);
+        setConnectionStatus('offline');
       } finally {
         setLoading(false);
       }
@@ -33,6 +39,7 @@ export const FinancialProvider = ({ children }) => {
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null);
+      setLoading(false);
     });
 
     return () => subscription.unsubscribe();
@@ -40,7 +47,11 @@ export const FinancialProvider = ({ children }) => {
 
   // Carregar dados quando o usuário logar
   useEffect(() => {
-    if (!user) return;
+    if (!user) {
+      setRevenues([]);
+      setExpenses([]);
+      return;
+    }
 
     const fetchData = async () => {
       setLoading(true);
@@ -78,7 +89,7 @@ export const FinancialProvider = ({ children }) => {
       saldoCaixa: finances.received - finances.paidExpenses,
       possoMePagarHoje: finances.canPayToday,
       valorReservaEmergencia: finances.emergencyReserve,
-      contasAVencer: commitments // Simplificado
+      contasAVencer: commitments || []
     };
   }, [revenues, expenses, commitments, settings]);
 
@@ -113,13 +124,12 @@ export const FinancialProvider = ({ children }) => {
     await supabase.auth.signOut();
   };
 
-  // Loader elegante para não parecer travado
-  if (loading && !user) {
+  if (loading) {
     return (
       <div className="min-h-screen bg-[#050505] flex items-center justify-center">
         <div className="flex flex-col items-center gap-4">
           <div className="w-12 h-12 border-4 border-indigo-500/20 border-t-indigo-500 rounded-full animate-spin" />
-          <p className="text-slate-400 font-medium animate-pulse text-sm">Autenticando...</p>
+          <p className="text-slate-400 font-medium animate-pulse text-sm">Carregando...</p>
         </div>
       </div>
     );
@@ -128,6 +138,7 @@ export const FinancialProvider = ({ children }) => {
   return (
     <FinancialContext.Provider value={{ 
       user,
+      connectionStatus,
       ...stats, 
       settings, 
       revenues, 
