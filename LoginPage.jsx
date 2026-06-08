@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { supabase } from './supabase';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { Wallet, ArrowRight, Sparkles, Mail, Lock, Loader2 } from 'lucide-react';
 
 const LoginPage = () => {
@@ -18,19 +18,24 @@ const LoginPage = () => {
         : await supabase.auth.signInWithPassword({ email, password });
 
       if (error) throw error;
-      if (isSignUp) alert('Verifique seu e-mail ou faça login agora!');
+      if (isSignUp) alert('Conta criada! Verifique seu e-mail (se a confirmação estiver ativa) ou tente entrar.');
     } catch (err) {
-      alert(err.message);
+      const errorMsg = err.message === 'Load failed' 
+        ? 'Erro de conexão: Verifique se as chaves do Supabase estão configuradas na Vercel.' 
+        : err.message;
+      alert(errorMsg);
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#050505] relative overflow-hidden px-4">
+    <div className="fixed inset-0 flex items-center justify-center bg-[#050505] overflow-hidden px-4">
       {/* Ambient Lighting */}
-      <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-indigo-600/10 blur-[120px] rounded-full" />
-      <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-violet-600/10 blur-[120px] rounded-full" />
+      <div className="absolute top-0 left-0 w-full h-full pointer-events-none">
+        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-indigo-600/10 blur-[120px] rounded-full" />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-violet-600/10 blur-[120px] rounded-full" />
+      </div>
 
       <motion.div 
         initial={{ opacity: 0, scale: 0.95 }}
