@@ -50,7 +50,7 @@ const DashboardPage = () => {
           { label: 'Faturamento', val: currentMonthRevenue, color: 'text-white', icon: ArrowUpRight },
           { label: 'Em Caixa', val: received, color: 'text-emerald-400', icon: Wallet },
           { label: 'Gastos + Fixos', val: paidExpenses + totalFixedCosts, color: 'text-rose-400', icon: ArrowDownRight },
-          { label: 'Salário Livre', val: availableSalary, color: 'text-indigo-400', icon: Target },
+          { label: 'Salário (Pró-labore)', val: availableSalary, color: 'text-indigo-400', icon: Target },
         ].map((item, i) => (
           <Card key={i} className="relative overflow-hidden group">
             <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:opacity-30 group-hover:scale-125 transition-all duration-700">

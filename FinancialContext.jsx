@@ -16,6 +16,7 @@ export const FinancialProvider = ({ children }) => {
     monthlyGoal: 5000,
     withdrawalPercentage: 70,
     emergencyReservePercentage: 10,
+    proLabore: 1412,
     darkMode: true
   });
 
@@ -69,7 +70,14 @@ export const FinancialProvider = ({ children }) => {
         if (rev.data) setRevenues(rev.data);
         if (exp.data) setExpenses(exp.data);
         if (com.data) setCommitments(com.data);
-        if (prof.data) setSettings(prev => ({ ...prev, ...prof.data }));
+        if (prof.data) setSettings({
+          companyName: prof.data.company_name,
+          monthlyGoal: prof.data.monthly_goal,
+          withdrawalPercentage: prof.data.withdrawal_percentage,
+          emergencyReservePercentage: prof.data.emergency_reserve_percentage,
+          proLabore: prof.data.pro_labore,
+          darkMode: prof.data.dark_mode
+        });
       } catch (err) {
         console.error("Erro ao buscar dados:", err);
       }
@@ -133,7 +141,16 @@ export const FinancialProvider = ({ children }) => {
       if (!error) setRevenues(prev => prev.filter(r => r.id !== id));
     },
     updateSettings: async (newSettings) => {
-      const { error } = await supabase.from('profiles').upsert({ id: user.id, ...newSettings, updated_at: new Date() });
+      const { error } = await supabase.from('profiles').upsert({ 
+        id: user.id, 
+        company_name: newSettings.companyName,
+        monthly_goal: newSettings.monthlyGoal,
+        withdrawal_percentage: newSettings.withdrawalPercentage,
+        emergency_reserve_percentage: newSettings.emergencyReservePercentage,
+        pro_labore: newSettings.proLabore,
+        dark_mode: newSettings.darkMode,
+        updated_at: new Date() 
+      });
       if (!error) setSettings(newSettings);
     },
     signOut: () => supabase.auth.signOut(),

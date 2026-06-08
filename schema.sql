@@ -5,6 +5,7 @@ CREATE TABLE IF NOT EXISTS public.profiles (
   monthly_goal NUMERIC DEFAULT 5000,
   withdrawal_percentage NUMERIC DEFAULT 70,
   emergency_reserve_percentage NUMERIC DEFAULT 10,
+  pro_labore NUMERIC DEFAULT 1412,
   dark_mode BOOLEAN DEFAULT TRUE,
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );

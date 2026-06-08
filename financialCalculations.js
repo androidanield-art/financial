@@ -20,11 +20,14 @@ export const calculateFinances = (revenues, expenses, commitments, settings) => 
   // Reserva de Emergência (sobre o faturamento recebido)
   const emergencyReserve = received * (settings.emergencyReservePercentage / 100);
 
+  // Pró-labore fixo definido nas configurações
+  const proLabore = Number(settings.proLabore || 0);
+
   // Saldo Disponível = Recebido - Despesas Pagas - Reserva - Compromissos Fixos Futuros
-  const availableBalance = received - paidExpenses - emergencyReserve - totalFixedCosts;
+  const availableBalance = received - paidExpenses - emergencyReserve - totalFixedCosts - proLabore;
 
   // Salário Disponível = Saldo Disponível * percentual configurado
-  const availableSalary = Math.max(0, availableBalance * (settings.withdrawalPercentage / 100));
+  const availableSalary = proLabore + Math.max(0, availableBalance * (settings.withdrawalPercentage / 100));
 
   // Indicador "Posso me pagar hoje?"
   const canPayToday = availableBalance > 0 && received > (paidExpenses + totalFixedCosts);
