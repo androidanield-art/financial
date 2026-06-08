@@ -20,7 +20,7 @@ const LoginPage = () => {
         : await supabase.auth.signInWithPassword({ email, password });
 
       if (error) throw error;
-      if (isSignUp) alert('Conta criada! Verifique seu e-mail (se a confirmação estiver ativa) ou tente entrar.');
+      if (isSignUp) alert('Conta criada com sucesso! Você já pode acessar o sistema.');
     } catch (err) {
       alert('Erro: ' + err.message);
     } finally {

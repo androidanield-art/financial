@@ -5,7 +5,7 @@ import { Plus, Receipt, Trash2, Tag } from 'lucide-react';
 import Card from './Card';
 
 const ExpensesPage = () => {
-  const { expenses, addExpense } = useFinancial();
+  const { expenses, addExpense, deleteExpense } = useFinancial();
   const [formData, setFormData] = useState({
     description: '',
     category: 'Outros',

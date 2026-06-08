@@ -1,61 +1,54 @@
-// src/pages/DashboardPage.jsx
 import React from 'react';
 import { useFinancial } from './FinancialContext';
-import Card from './Card'; // Assumindo que Card está na raiz ou ajuste conforme necessário
-import PaydayIndicator from './PaydayIndicator'; 
+import Card from './Card';
+import PaydayIndicator from './PaydayIndicator';
+import { ArrowUpRight, ArrowDownRight, Wallet, Target } from 'lucide-react';
 
 const DashboardPage = () => {
   const {
-    faturamentoBrutoMes,
-    recebimentosConfirmados,
-    despesasMes,
-    lucroLiquido,
-    saldoCaixa,
+    currentMonthRevenue,
+    received,
+    paidExpenses,
+    netProfit,
+    availableBalance,
     salarioDisponivel,
-    valorReservaEmergencia,
-    contasAVencer,
-    settings,
-    possoMePagarHoje,
+    emergencyReserve,
+    possoMePagarHoje
   } = useFinancial();
 
-  const formatCurrency = (value) =>
-    new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
+  const format = (v) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(v);
 
   return (
-    <div className="w-full max-w-6xl space-y-10">
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+    <div className="w-full max-w-7xl space-y-12">
+      <header className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-white/5 pb-8">
         <div>
-          <p className="text-indigo-500 font-bold text-sm uppercase tracking-widest mb-2">Visão Geral</p>
-          <h1 className="text-4xl font-black text-white tracking-tight">Dashboard</h1>
+          <h1 className="text-5xl font-black text-white tracking-tighter italic">VISÃO GERAL</h1>
+          <p className="text-slate-400 mt-2 font-medium">Sua saúde financeira em tempo real.</p>
         </div>
-
-        <a href="https://www.nfse.gov.br/EmissorNacional/" target="_blank" rel="noopener noreferrer"
-           className="inline-flex items-center px-6 py-4 bg-white text-black font-black rounded-2xl hover:bg-slate-200 transition-all shadow-xl shadow-indigo-500/5 text-sm">
-          Emitir Nota Fiscal (NFS-e)
+        <a 
+          href="https://www.nfse.gov.br/EmissorNacional/" 
+          target="_blank" 
+          className="bg-indigo-600 hover:bg-indigo-500 text-white px-8 py-4 rounded-full font-bold transition-all shadow-lg shadow-indigo-500/20"
+        >
+          Emitir NFS-e
         </a>
-      </div>
+      </header>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
-        <Card title="Faturamento Bruto (Mês)">
-          <p className="text-3xl font-black text-indigo-600 dark:text-indigo-400 tracking-tighter">
-            {formatCurrency(faturamentoBrutoMes)}
-          </p>
-        </Card>
-        <Card title="Recebimentos Confirmados">
-          <p className="text-3xl font-black text-emerald-600 dark:text-emerald-400 tracking-tighter">
-            {formatCurrency(recebimentosConfirmados)}
-          </p>
-        </Card>
-        <Card title="Despesas (Mês)">
-          <p className="text-3xl font-black text-rose-600 dark:text-rose-400 tracking-tighter">
-            {formatCurrency(despesasMes)}
-          </p>
-        </Card>
-        <Card title="Salário Disponível">
-          <p className="text-3xl font-black text-amber-500 tracking-tighter">
-            {formatCurrency(salarioDisponivel)}
-          </p>
-        </Card>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        {[
+          { label: 'Receita Total', val: currentMonthRevenue, color: 'text-white', icon: ArrowUpRight },
+          { label: 'Já Recebido', val: received, color: 'text-emerald-400', icon: Wallet },
+          { label: 'Despesas', val: paidExpenses, color: 'text-rose-500', icon: ArrowDownRight },
+          { label: 'Salário Livre', val: salarioDisponivel, color: 'text-indigo-400', icon: Target },
+        ].map((item, i) => (
+          <Card key={i} className="border-white/5 bg-white/[0.02]">
+            <div className="flex items-center justify-between mb-4 text-slate-500">
+              <span className="text-xs font-bold uppercase tracking-widest">{item.label}</span>
+              <item.icon size={16} />
+            </div>
+            <p className={`text-3xl font-black tracking-tighter ${item.color}`}>{format(item.val)}</p>
+          </Card>
+        ))}
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-10">
