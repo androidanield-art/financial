@@ -37,17 +37,21 @@ export const FinancialProvider = ({ children }) => {
 
     const fetchData = async () => {
       setLoading(true);
-      const [rev, exp, com, prof] = await Promise.all([
-        supabase.from('revenues').select('*').order('date', { ascending: false }),
-        supabase.from('expenses').select('*').order('date', { ascending: false }),
-        supabase.from('commitments').select('*'),
-        supabase.from('profiles').select('*').single()
-      ]);
+      try {
+        const [rev, exp, com, prof] = await Promise.all([
+          supabase.from('revenues').select('*').order('date', { ascending: false }),
+          supabase.from('expenses').select('*').order('date', { ascending: false }),
+          supabase.from('commitments').select('*'),
+          supabase.from('profiles').select('*').maybeSingle()
+        ]);
 
-      if (rev.data) setRevenues(rev.data);
-      if (exp.data) setExpenses(exp.data);
-      if (com.data) setCommitments(com.data);
-      if (prof.data) setSettings(prof.data);
+        if (rev.data) setRevenues(rev.data);
+        if (exp.data) setExpenses(exp.data);
+        if (com.data) setCommitments(com.data);
+        if (prof.data) setSettings(prev => ({ ...prev, ...prof.data }));
+      } catch (err) {
+        console.error("Erro ao buscar dados:", err);
+      }
       setLoading(false);
     };
 
@@ -67,6 +71,11 @@ export const FinancialProvider = ({ children }) => {
   const addExpense = async (item) => {
     const { data, error } = await supabase.from('expenses').insert([{ ...item, user_id: user.id }]).select();
     if (!error) setExpenses([data[0], ...expenses]);
+  };
+
+  const deleteRevenue = async (id) => {
+    const { error } = await supabase.from('revenues').delete().eq('id', id);
+    if (!error) setRevenues(revenues.filter(r => r.id !== id));
   };
 
   const updateSettings = async (newSettings) => {
@@ -97,6 +106,7 @@ export const FinancialProvider = ({ children }) => {
       expenses, 
       addRevenue,
       addExpense,
+      deleteRevenue,
       updateSettings,
       toggleDarkMode,
       signOut
