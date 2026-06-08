@@ -15,10 +15,6 @@ export const calculateFinances = (revenues, expenses, commitments, settings) => 
     c.due_day <= todayDay || (c.due_day <= todayDay + 5)
   );
 
-  // Filtrar despesas recorrentes que já estão na lista de despesas para evitar duplicidade 
-  // se elas já estiverem pagas, ou usá-las para previsão.
-  const recurrentTotal = expenses.filter(e => e.recurrent).reduce((acc, curr) => acc + Number(curr.value), 0);
-
   // Reserva de Emergência (sobre o faturamento recebido)
   const emergencyReserve = received * (settings.emergencyReservePercentage / 100);
 
