@@ -20,24 +20,25 @@ export const calculateFinances = (revenues, expenses, commitments, settings) => 
   // Reserva de Emergência (sobre o faturamento recebido)
   const emergencyReserve = received * (settings.emergencyReservePercentage / 100);
 
-  // Pró-labore fixo definido nas configurações
-  const proLabore = Number(settings.proLabore || 0);
+  // Saldo Operacional = O que sobra para dividir entre MEI e Empresa
+  // Recebido - Gastos - Fixos - Reserva de Segurança
+  const operationalBalance = received - paidExpenses - totalFixedCosts - emergencyReserve;
 
-  // Saldo Disponível = Recebido - Despesas Pagas - Reserva - Compromissos Fixos Futuros
-  const availableBalance = received - paidExpenses - emergencyReserve - totalFixedCosts - proLabore;
+  // Renda Pró-labore = A porcentagem do lucro que o MEI retira para viver
+  const proLabore = Math.max(0, operationalBalance * (settings.withdrawalPercentage / 100));
 
-  // Salário Disponível = Saldo Disponível * percentual configurado
-  const availableSalary = proLabore + Math.max(0, availableBalance * (settings.withdrawalPercentage / 100));
+  // Saldo de Manutenção = O que fica na "gaveta" da empresa para o próximo mês
+  const companyMaintenance = Math.max(0, operationalBalance - proLabore);
 
   // Indicador "Posso me pagar hoje?"
-  const canPayToday = availableBalance > 0 && received > (paidExpenses + totalFixedCosts);
+  const canPayToday = operationalBalance > 0 && received > (paidExpenses + totalFixedCosts);
 
   return { 
     received, 
     paidExpenses, 
     emergencyReserve, 
-    availableBalance, 
-    availableSalary, 
+    proLabore,
+    companyMaintenance,
     canPayToday, 
     totalFixedCosts,
     urgentCommitmentsCount: urgentCommitments.length 

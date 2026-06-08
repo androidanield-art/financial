@@ -11,8 +11,8 @@ const DashboardPage = () => {
     received,
     paidExpenses,
     netProfit,
-    availableBalance,
-    availableSalary,
+    proLabore,
+    companyMaintenance,
     emergencyReserve,
     canPayToday,
     nextBills,
@@ -50,7 +50,7 @@ const DashboardPage = () => {
           { label: 'Faturamento', val: currentMonthRevenue, color: 'text-white', icon: ArrowUpRight },
           { label: 'Em Caixa', val: received, color: 'text-emerald-400', icon: Wallet },
           { label: 'Gastos + Fixos', val: paidExpenses + totalFixedCosts, color: 'text-rose-400', icon: ArrowDownRight },
-          { label: 'Salário (Pró-labore)', val: availableSalary, color: 'text-indigo-400', icon: Target },
+          { label: 'Renda Pró-labore', val: proLabore, color: 'text-indigo-400', icon: Target },
         ].map((item, i) => (
           <Card key={i} className="relative overflow-hidden group">
             <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:opacity-30 group-hover:scale-125 transition-all duration-700">
@@ -73,11 +73,11 @@ const DashboardPage = () => {
                 <p className="text-2xl font-black text-white tracking-tight">{format(netProfit)}</p>
               </div>
               <div>
-                <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-3">Patrimônio</p>
-                <p className="text-2xl font-black text-white tracking-tight">{format(availableBalance)}</p>
+                <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-3">Fundo de Manutenção</p>
+                <p className="text-2xl font-black text-white tracking-tight">{format(companyMaintenance)}</p>
               </div>
               <div>
-                <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-3">Reserva</p>
+                <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-3">Reserva de Segurança</p>
                 <p className="text-2xl font-black text-indigo-400 tracking-tight">{format(emergencyReserve)}</p>
               </div>
            </div>
