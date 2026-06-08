@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { useFinancial } from './FinancialContext';
 import { motion } from 'framer-motion';
-import { Plus, Receipt, Trash2, Tag, RefreshCw, Calendar } from 'lucide-react';
+import { Plus, Receipt, Trash2, Tag, RefreshCw, Calendar, Pencil, X } from 'lucide-react';
 import Card from './Card';
 
 const ExpensesPage = () => {
-  const { expenses, addExpense, deleteExpense } = useFinancial();
+  const { expenses, addExpense, deleteExpense, updateExpense } = useFinancial();
+  const [editingId, setEditingId] = useState(null);
   const [formData, setFormData] = useState({
     description: '',
     category: 'Outros',
@@ -16,10 +17,38 @@ const ExpensesPage = () => {
 
   const categories = ['Adobe', 'Internet', 'Aluguel', 'Energia', 'Marketing', 'Equipamentos', 'Impostos', 'Outros'];
 
+  const handleEdit = (exp) => {
+    setEditingId(exp.id);
+    setFormData({
+      description: exp.description,
+      category: exp.category,
+      value: exp.value,
+      date: exp.date,
+      recurrent: exp.recurrent || false
+    });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleCancel = () => {
+    setEditingId(null);
+    setFormData({
+      description: '',
+      category: 'Outros',
+      value: '',
+      date: new Date().toISOString().split('T')[0],
+      recurrent: false
+    });
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    addExpense({ ...formData, value: parseFloat(formData.value) });
-    setFormData({ description: '', category: 'Outros', value: '', date: new Date().toISOString().split('T')[0], recurrent: false });
+    const data = { ...formData, value: parseFloat(formData.value) };
+    if (editingId) {
+      updateExpense(editingId, data);
+    } else {
+      addExpense(data);
+    }
+    handleCancel();
   };
 
   return (
@@ -31,7 +60,7 @@ const ExpensesPage = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-1">
-          <Card title="Novo Gasto">
+          <Card title={editingId ? "Editar Gasto" : "Novo Gasto"}>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-1">
                 <label className="text-[10px] font-bold text-slate-500 uppercase ml-1">Descrição</label>
@@ -81,9 +110,20 @@ const ExpensesPage = () => {
                 />
                 <label className="text-sm text-slate-300 font-medium">Recorrência</label>
               </div>
-              <button type="submit" className="w-full bg-rose-600 hover:bg-rose-500 text-white font-bold py-3 rounded-xl transition-all shadow-lg shadow-rose-900/20">
-                Registrar Saída
-              </button>
+              <div className="flex gap-2">
+                <button type="submit" className="flex-1 bg-rose-600 hover:bg-rose-500 text-white font-bold py-3 rounded-xl transition-all shadow-lg shadow-rose-900/20">
+                  {editingId ? "Salvar Alterações" : "Registrar Saída"}
+                </button>
+                {editingId && (
+                  <button 
+                    type="button" 
+                    onClick={handleCancel}
+                    className="bg-slate-700 hover:bg-slate-600 text-white px-4 rounded-xl transition-all"
+                  >
+                    <X size={20} />
+                  </button>
+                )}
+              </div>
             </form>
           </Card>
         </div>
@@ -119,6 +159,12 @@ const ExpensesPage = () => {
                     <Calendar size={10} /> {new Date(exp.date + 'T00:00:00').toLocaleDateString('pt-BR')}
                   </div>
                 </div>
+                <button 
+                  onClick={() => handleEdit(exp)}
+                  className="p-2 text-slate-700 hover:text-indigo-400 transition-colors"
+                >
+                  <Pencil size={16} />
+                </button>
                 <button 
                   onClick={() => deleteExpense(exp.id)}
                   className="p-2 text-slate-700 hover:text-rose-500 transition-colors"
