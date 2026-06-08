@@ -22,24 +22,21 @@ export const FinancialProvider = ({ children }) => {
   // Gerenciar Sessão do Usuário
   useEffect(() => {
     const initAuth = async () => {
-      try {
-        const { data: { session }, error } = await supabase.auth.getSession();
-        if (error) throw error;
+      const { data: { session }, error } = await supabase.auth.getSession();
+      if (error) {
+        setConnectionStatus('offline');
+      } else {
         setUser(session?.user ?? null);
         setConnectionStatus('online');
-      } catch (err) {
-        console.error("Erro de conexão Supabase:", err);
-        setConnectionStatus('offline');
-      } finally {
-        setLoading(false);
       }
+      setLoading(false);
     };
 
     initAuth();
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null);
-      setLoading(false);
+      if (session) setConnectionStatus('online');
     });
 
     return () => subscription.unsubscribe();
@@ -129,7 +126,7 @@ export const FinancialProvider = ({ children }) => {
       <div className="min-h-screen bg-[#050505] flex items-center justify-center">
         <div className="flex flex-col items-center gap-4">
           <div className="w-12 h-12 border-4 border-indigo-500/20 border-t-indigo-500 rounded-full animate-spin" />
-          <p className="text-slate-400 font-medium animate-pulse text-sm">Carregando...</p>
+          <p className="text-slate-400 font-medium animate-pulse text-sm">Inicializando...</p>
         </div>
       </div>
     );

@@ -4,11 +4,12 @@
 
 @layer base {
   body {
-    @apply bg-[#050505] text-slate-200 transition-colors duration-200 antialiased;
+    @apply bg-[#050505] text-slate-200 antialiased overflow-x-hidden;
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
     background-image: 
-      radial-gradient(circle at 50% -20%, rgba(79, 70, 229, 0.15) 0%, transparent 70%);
+      radial-gradient(circle at 50% -20%, rgba(79, 70, 229, 0.1) 0%, transparent 80%);
     background-attachment: fixed;
+    min-height: 100vh;
   }
   .dark body {
     @apply bg-[#050505] text-slate-100;
