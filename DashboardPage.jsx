@@ -29,22 +29,22 @@ const DashboardPage = () => {
   ];
 
   return (
-    <div className="w-full space-y-16">
-      <header className="flex flex-col md:flex-row md:items-end justify-between gap-8">
+    <div className="w-full space-y-20">
+      <header className="flex flex-col md:flex-row md:items-end justify-between gap-10">
         <div>
-          <h1 className="text-7xl font-black text-white tracking-tighter italic leading-none text-gradient">RESUMO</h1>
-          <p className="text-slate-500 mt-4 text-lg font-medium tracking-tight">Painel de controle inteligente do seu MEI.</p>
+          <h1 className="text-8xl font-black text-white tracking-tighter italic leading-none text-gradient">OVERVIEW</h1>
+          <p className="text-slate-500 mt-6 text-xl font-medium tracking-tight max-w-xl leading-relaxed">Sua inteligência financeira condensada em um único painel de alta performance.</p>
         </div>
         <a 
           href="https://www.nfse.gov.br/EmissorNacional/" 
           target="_blank" 
-          className="bg-white text-black px-10 py-5 rounded-3xl font-black text-sm uppercase tracking-widest hover:scale-105 active:scale-95 transition-all shadow-2xl shadow-white/5"
+          className="bg-white text-black px-12 py-6 rounded-[2rem] font-black text-xs uppercase tracking-[0.2em] hover:scale-105 active:scale-95 transition-all shadow-2xl shadow-white/10"
         >
           Emitir NFS-e
         </a>
       </header>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
         {[
           { label: 'Faturamento', val: currentMonthRevenue, color: 'text-white', icon: ArrowUpRight },
           { label: 'Em Caixa', val: received, color: 'text-emerald-400', icon: Wallet },
@@ -52,11 +52,11 @@ const DashboardPage = () => {
           { label: 'Disponível', val: availableSalary, color: 'text-indigo-400', icon: Target },
         ].map((item, i) => (
           <Card key={i} className="relative overflow-hidden group">
-            <div className="absolute top-0 right-0 p-6 opacity-20 group-hover:scale-110 transition-transform">
+            <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:opacity-30 group-hover:scale-125 transition-all duration-700">
               <item.icon size={24} className={item.color} />
             </div>
-            <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-4">{item.label}</p>
-            <p className={`text-4xl font-black tracking-tighter ${item.color} tabular-nums`}>{format(item.val)}</p>
+            <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em] mb-6">{item.label}</p>
+            <p className={`text-5xl font-black tracking-tighter ${item.color} tabular-nums`}>{format(item.val)}</p>
           </Card>
         ))}
       </div>
