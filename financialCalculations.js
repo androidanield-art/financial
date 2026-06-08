@@ -27,9 +27,6 @@ export const calculateFinances = (revenues, expenses, commitments, settings) => 
   // Renda Pró-labore = A porcentagem do lucro que o MEI retira para viver
   const proLabore = Math.max(0, operationalBalance * (settings.withdrawalPercentage / 100));
 
-  // Saldo de Manutenção = O que fica na "gaveta" da empresa para o próximo mês
-  const companyMaintenance = Math.max(0, operationalBalance - proLabore);
-
   // Indicador "Posso me pagar hoje?"
   const canPayToday = operationalBalance > 0 && received > (paidExpenses + totalFixedCosts);
 
@@ -38,7 +35,6 @@ export const calculateFinances = (revenues, expenses, commitments, settings) => 
     paidExpenses, 
     emergencyReserve, 
     proLabore,
-    companyMaintenance,
     canPayToday, 
     totalFixedCosts,
     urgentCommitmentsCount: urgentCommitments.length 

@@ -12,7 +12,6 @@ const DashboardPage = () => {
     paidExpenses,
     netProfit,
     proLabore,
-    companyMaintenance,
     emergencyReserve,
     canPayToday,
     nextBills,
@@ -67,14 +66,10 @@ const DashboardPage = () => {
            <PaydayIndicator canPay={canPayToday} />
         </div>
         <Card title="Status do Caixa" className="lg:col-span-8">
-           <div className="grid grid-cols-2 md:grid-cols-3 gap-8">
+           <div className="grid grid-cols-2 gap-8">
               <div>
                 <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-3">Lucro Líquido</p>
                 <p className="text-2xl font-black text-white tracking-tight">{format(netProfit)}</p>
-              </div>
-              <div>
-                <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-3">Fundo de Manutenção</p>
-                <p className="text-2xl font-black text-white tracking-tight">{format(companyMaintenance)}</p>
               </div>
               <div>
                 <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-3">Reserva de Segurança</p>

@@ -1,11 +1,12 @@
 -- 1. Tabela de Perfis (Configurações do Usuário)
+-- 1. Tabela de Perfis (Configurações de Inteligência Financeira do MEI)
 CREATE TABLE IF NOT EXISTS public.profiles (
   id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
   company_name TEXT DEFAULT '',
-  monthly_goal NUMERIC DEFAULT 5000,
-  withdrawal_percentage NUMERIC DEFAULT 70,
-  emergency_reserve_percentage NUMERIC DEFAULT 10,
-  pro_labore NUMERIC DEFAULT 1412,
+  monthly_goal NUMERIC DEFAULT 5000, -- Meta de faturamento
+  withdrawal_percentage NUMERIC DEFAULT 70, -- % de Pró-labore sobre o lucro
+  emergency_reserve_percentage NUMERIC DEFAULT 10, -- % de Reserva sobre o bruto
+  pro_labore NUMERIC DEFAULT 1412, -- Valor base/referência
   dark_mode BOOLEAN DEFAULT TRUE,
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
@@ -33,11 +34,6 @@ CREATE TABLE IF NOT EXISTS public.expenses (
   recurrent BOOLEAN DEFAULT FALSE,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
-
-/* 
-   SE A TABELA JÁ EXISTIR, RODE APENAS ESTE COMANDO NO SQL EDITOR:
-   ALTER TABLE public.expenses ADD COLUMN IF NOT EXISTS recurrent BOOLEAN DEFAULT FALSE;
-*/
 
 -- 4. Tabela de Compromissos Fixos
 CREATE TABLE IF NOT EXISTS public.commitments (
