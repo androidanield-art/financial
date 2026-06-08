@@ -20,10 +20,7 @@ const LoginPage = () => {
       if (error) throw error;
       if (isSignUp) alert('Conta criada! Verifique seu e-mail (se a confirmação estiver ativa) ou tente entrar.');
     } catch (err) {
-      const errorMsg = err.message === 'Load failed' 
-        ? 'Erro de conexão: Verifique se as chaves do Supabase estão configuradas na Vercel.' 
-        : err.message;
-      alert(errorMsg);
+      alert('Erro: ' + err.message);
     } finally {
       setLoading(false);
     }
