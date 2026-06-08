@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useFinancial } from './FinancialContext';
 import { motion } from 'framer-motion';
-import { Plus, Receipt, Trash2, Tag } from 'lucide-react';
+import { Plus, Receipt, Trash2, Tag, RefreshCw, Calendar } from 'lucide-react';
 import Card from './Card';
 
 const ExpensesPage = () => {
@@ -10,7 +10,8 @@ const ExpensesPage = () => {
     description: '',
     category: 'Outros',
     value: '',
-    date: new Date().toISOString().split('T')[0]
+    date: new Date().toISOString().split('T')[0],
+    recurrent: false
   });
 
   const categories = ['Adobe', 'Internet', 'Aluguel', 'Energia', 'Marketing', 'Equipamentos', 'Impostos', 'Outros'];
@@ -18,7 +19,7 @@ const ExpensesPage = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     addExpense({ ...formData, value: parseFloat(formData.value) });
-    setFormData({ description: '', category: 'Outros', value: '', date: new Date().toISOString().split('T')[0] });
+    setFormData({ description: '', category: 'Outros', value: '', date: new Date().toISOString().split('T')[0], recurrent: false });
   };
 
   return (
@@ -61,6 +62,25 @@ const ExpensesPage = () => {
                   onChange={e => setFormData({...formData, value: e.target.value})}
                 />
               </div>
+              <div className="space-y-1">
+                <label className="text-[10px] font-bold text-slate-500 uppercase ml-1">Data de Vencimento</label>
+                <input 
+                  type="date"
+                  required
+                  className="w-full bg-slate-800 border-none rounded-xl p-3 text-white text-sm focus:ring-2 focus:ring-rose-500 outline-none"
+                  value={formData.date}
+                  onChange={e => setFormData({...formData, date: e.target.value})}
+                />
+              </div>
+              <div className="flex items-center gap-2 p-3 bg-slate-800 rounded-xl">
+                <input 
+                  type="checkbox" 
+                  checked={formData.recurrent}
+                  onChange={e => setFormData({...formData, recurrent: e.target.checked})}
+                  className="w-4 h-4 rounded border-gray-300 text-rose-600 focus:ring-rose-500 outline-none"
+                />
+                <label className="text-sm text-slate-300 font-medium">Recorrência</label>
+              </div>
               <button type="submit" className="w-full bg-rose-600 hover:bg-rose-500 text-white font-bold py-3 rounded-xl transition-all shadow-lg shadow-rose-900/20">
                 Registrar Saída
               </button>
@@ -85,11 +105,26 @@ const ExpensesPage = () => {
                   <div className="flex items-center gap-2 text-[10px] text-slate-500 font-bold uppercase">
                     <Tag className="w-3 h-3" /> {exp.category}
                   </div>
+                  {exp.recurrent && (
+                    <div className="flex items-center gap-1 text-[9px] text-indigo-400 font-bold uppercase mt-1">
+                      <RefreshCw size={10} /> Recorrente
+                    </div>
+                  )}
                 </div>
               </div>
-              <div className="text-right">
-                <p className="text-white font-black text-sm">R$ {Number(exp.value).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</p>
-                <p className="text-[10px] text-slate-600 font-bold uppercase">{exp.date}</p>
+              <div className="flex items-center gap-6">
+                <div className="text-right">
+                  <p className="text-white font-black text-sm">R$ {Number(exp.value).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</p>
+                  <div className="flex items-center justify-end gap-1 text-[10px] text-slate-600 font-bold uppercase">
+                    <Calendar size={10} /> {new Date(exp.date + 'T00:00:00').toLocaleDateString('pt-BR')}
+                  </div>
+                </div>
+                <button 
+                  onClick={() => deleteExpense(exp.id)}
+                  className="p-2 text-slate-700 hover:text-rose-500 transition-colors"
+                >
+                  <Trash2 size={16} />
+                </button>
               </div>
             </motion.div>
           ))}

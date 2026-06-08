@@ -7,8 +7,10 @@ export const calculateFinances = (revenues, expenses, commitments, settings) => 
 
   const paidExpenses = expenses.reduce((acc, curr) => acc + Number(curr.value), 0);
   
-  // Soma compromissos fixos (aluguel, etc) e despesas marcadas como recorrentes
-  const totalFixedCosts = commitments.reduce((acc, curr) => acc + Number(curr.value), 0);
+  // Compromissos fixos (templates mensais)
+  const commitmentsTotal = commitments.reduce((acc, curr) => acc + Number(curr.value), 0);
+  
+  const totalFixedCosts = commitmentsTotal;
   
   // Identifica compromissos que vencem nos próximos 5 dias ou já venceram este mês
   const urgentCommitments = commitments.filter(c => 
