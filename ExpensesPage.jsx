@@ -11,7 +11,7 @@ const ExpensesPage = () => {
     description: '',
     category: 'Outros',
     value: '',
-    date: new Date().toISOString().split('T')[0],
+    date: new Date().toLocaleDateString('en-CA'), // Formato YYYY-MM-DD estável
     recurrent: false
   });
 
@@ -23,10 +23,26 @@ const ExpensesPage = () => {
       description: exp.description,
       category: exp.category,
       value: exp.value,
-      date: exp.date,
+      date: exp.date.split('T')[0], // Garante que apenas YYYY-MM-DD entre no input
       recurrent: exp.recurrent || false
     });
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleRenew = (exp) => {
+    // Calcula a data para o mês seguinte, mantendo o mesmo dia
+    const currentDate = new Date(exp.date + 'T12:00:00');
+    currentDate.setMonth(currentDate.getMonth() + 1);
+    
+    const nextMonthData = {
+      description: exp.description,
+      category: exp.category,
+      value: exp.value,
+      date: currentDate.toISOString().split('T')[0],
+      recurrent: true
+    };
+    
+    addExpense(nextMonthData);
   };
 
   const handleCancel = () => {
@@ -35,7 +51,7 @@ const ExpensesPage = () => {
       description: '',
       category: 'Outros',
       value: '',
-      date: new Date().toISOString().split('T')[0],
+      date: new Date().toLocaleDateString('en-CA'),
       recurrent: false
     });
   };
@@ -146,9 +162,14 @@ const ExpensesPage = () => {
                     <Tag className="w-3 h-3" /> {exp.category}
                   </div>
                   {exp.recurrent && (
-                    <div className="flex items-center gap-1 text-[9px] text-indigo-400 font-bold uppercase mt-1">
-                      <RefreshCw size={10} /> Recorrente
-                    </div>
+                    <button 
+                      onClick={() => handleRenew(exp)}
+                      className="flex items-center gap-1 text-[9px] text-indigo-400 hover:text-indigo-300 font-bold uppercase mt-1 transition-colors"
+                      title="Lançar para o próximo mês"
+                    >
+                      <RefreshCw size={10} /> 
+                      Recorrente (Clique para Renovar)
+                    </button>
                   )}
                 </div>
               </div>
@@ -156,7 +177,7 @@ const ExpensesPage = () => {
                 <div className="text-right">
                   <p className="text-white font-black text-sm">R$ {Number(exp.value).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</p>
                   <div className="flex items-center justify-end gap-1 text-[10px] text-slate-600 font-bold uppercase">
-                    <Calendar size={10} /> {new Date(exp.date + 'T00:00:00').toLocaleDateString('pt-BR')}
+                    <Calendar size={10} /> {new Date(exp.date + 'T12:00:00').toLocaleDateString('pt-BR')}
                   </div>
                 </div>
                 <button 

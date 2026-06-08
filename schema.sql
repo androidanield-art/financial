@@ -33,6 +33,11 @@ CREATE TABLE IF NOT EXISTS public.expenses (
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
+/* 
+   SE A TABELA JÁ EXISTIR, RODE APENAS ESTE COMANDO NO SQL EDITOR:
+   ALTER TABLE public.expenses ADD COLUMN IF NOT EXISTS recurrent BOOLEAN DEFAULT FALSE;
+*/
+
 -- 4. Tabela de Compromissos Fixos
 CREATE TABLE IF NOT EXISTS public.commitments (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),

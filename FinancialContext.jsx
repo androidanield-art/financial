@@ -97,14 +97,40 @@ export const FinancialProvider = ({ children }) => {
       if (!error) setRevenues(prev => [data[0], ...prev]);
       return { error };
     },
+    updateRevenue: async (id, item) => {
+      const { data, error } = await supabase
+        .from('revenues')
+        .update(item)
+        .eq('id', id)
+        .select();
+      if (!error && data) {
+        setRevenues(prev => prev.map(r => (r.id === id ? data[0] : r)));
+      }
+      return { error };
+    },
     addExpense: async (item) => {
       const { data, error } = await supabase.from('expenses').insert([{ ...item, user_id: user.id }]).select();
       if (!error) setExpenses(prev => [data[0], ...prev]);
       return { error };
     },
+    updateExpense: async (id, item) => {
+      const { data, error } = await supabase
+        .from('expenses')
+        .update(item)
+        .eq('id', id)
+        .select();
+      if (!error && data) {
+        setExpenses(prev => prev.map(e => (e.id === id ? data[0] : e)));
+      }
+      return { error };
+    },
     deleteExpense: async (id) => {
       const { error } = await supabase.from('expenses').delete().eq('id', id);
       if (!error) setExpenses(prev => prev.filter(e => e.id !== id));
+    },
+    deleteRevenue: async (id) => {
+      const { error } = await supabase.from('revenues').delete().eq('id', id);
+      if (!error) setRevenues(prev => prev.filter(r => r.id !== id));
     },
     updateSettings: async (newSettings) => {
       const { error } = await supabase.from('profiles').upsert({ id: user.id, ...newSettings, updated_at: new Date() });

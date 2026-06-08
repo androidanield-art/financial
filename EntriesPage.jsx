@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { useFinancial } from './FinancialContext';
 import { motion } from 'framer-motion';
-import { Plus, Trash2, Calendar, User, Briefcase, DollarSign } from 'lucide-react';
+import { Plus, Trash2, Calendar, User, Briefcase, DollarSign, Pencil, X } from 'lucide-react';
 import Card from './Card';
 
 const EntriesPage = () => {
-  const { revenues, addRevenue, deleteRevenue } = useFinancial();
+  const { revenues, addRevenue, deleteRevenue, updateRevenue } = useFinancial();
+  const [editingId, setEditingId] = useState(null);
   const [formData, setFormData] = useState({
     client: '',
     service: '',
@@ -14,10 +15,38 @@ const EntriesPage = () => {
     status: 'A receber'
   });
 
+  const handleEdit = (rev) => {
+    setEditingId(rev.id);
+    setFormData({
+      client: rev.client,
+      service: rev.service || '',
+      value: rev.value,
+      date: rev.date,
+      status: rev.status
+    });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleCancel = () => {
+    setEditingId(null);
+    setFormData({
+      client: '',
+      service: '',
+      value: '',
+      date: new Date().toLocaleDateString('en-CA'),
+      status: 'A receber'
+    });
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    addRevenue({ ...formData, value: parseFloat(formData.value) });
-    setFormData({ client: '', service: '', value: '', date: new Date().toISOString().split('T')[0], status: 'A receber' });
+    const data = { ...formData, value: parseFloat(formData.value) };
+    if (editingId) {
+      updateRevenue(editingId, data);
+    } else {
+      addRevenue(data);
+    }
+    handleCancel();
   };
 
   return (
@@ -30,7 +59,7 @@ const EntriesPage = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Formulário */}
         <div className="lg:col-span-1">
-          <Card title="Novo Serviço">
+          <Card title={editingId ? "Editar Serviço" : "Novo Serviço"}>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-1">
                 <label className="text-[10px] font-bold text-slate-500 uppercase ml-1">Cliente</label>
@@ -39,6 +68,16 @@ const EntriesPage = () => {
                   className="w-full bg-slate-800 border-none rounded-xl p-3 text-white text-sm focus:ring-2 focus:ring-indigo-500 outline-none"
                   value={formData.client}
                   onChange={e => setFormData({...formData, client: e.target.value})}
+                />
+              </div>
+              <div className="space-y-1">
+                <label className="text-[10px] font-bold text-slate-500 uppercase ml-1">Data</label>
+                <input 
+                  type="date"
+                  required
+                  className="w-full bg-slate-800 border-none rounded-xl p-3 text-white text-sm focus:ring-2 focus:ring-indigo-500 outline-none"
+                  value={formData.date}
+                  onChange={e => setFormData({...formData, date: e.target.value})}
                 />
               </div>
               <div className="space-y-1">
@@ -61,9 +100,20 @@ const EntriesPage = () => {
                   <option value="Recebido">Recebido</option>
                 </select>
               </div>
-              <button type="submit" className="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3 rounded-xl transition-all flex items-center justify-center gap-2">
-                <Plus className="w-4 h-4" /> Salvar Entrada
-              </button>
+              <div className="flex gap-2">
+                <button type="submit" className="flex-1 bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3 rounded-xl transition-all flex items-center justify-center gap-2">
+                  <Plus className="w-4 h-4" /> {editingId ? "Salvar Alterações" : "Salvar Entrada"}
+                </button>
+                {editingId && (
+                  <button 
+                    type="button" 
+                    onClick={handleCancel}
+                    className="bg-slate-700 hover:bg-slate-600 text-white px-4 rounded-xl transition-all"
+                  >
+                    <X size={20} />
+                  </button>
+                )}
+              </div>
             </form>
           </Card>
         </div>
