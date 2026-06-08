@@ -1,8 +1,8 @@
 // src/pages/DashboardPage.jsx
 import React from 'react';
-import { useFinancial } from '../contexts/FinancialContext';
-import Card from '../components/UI/Card'; // Componente Card genérico
-import PaydayIndicator from '../components/Dashboard/PaydayIndicator'; // O indicador especial
+import { useFinancial } from './FinancialContext';
+import Card from './Card'; // Assumindo que Card está na raiz ou ajuste conforme necessário
+import PaydayIndicator from './PaydayIndicator'; 
 
 const DashboardPage = () => {
   const {

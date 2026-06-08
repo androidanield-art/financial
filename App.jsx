@@ -1,7 +1,7 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
-import MainLayout from './components/Layout/MainLayout';
-import DashboardPage from './pages/DashboardPage';
+import MainLayout from './MainLayout';
+import DashboardPage from './DashboardPage';
 
 function App() {
   return (

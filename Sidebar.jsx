@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { useFinancial } from '../../contexts/FinancialContext';
+import { useFinancial } from './FinancialContext';
 
 const Sidebar = () => {
   const { toggleDarkMode, settings } = useFinancial();

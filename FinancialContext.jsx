@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useMemo, useState, useEffect } from 'react';
 import { supabase } from './supabase';
-import { calculateFinances } from '../utils/financialCalculations';
+import { calculateFinances } from './financialCalculations';
 
 const FinancialContext = createContext();
 
