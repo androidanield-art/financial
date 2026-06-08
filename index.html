@@ -1,11 +1,28 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-br" class="dark">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>MEI Financeiro</title>
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>MEI Finance | Gestão Profissional para Autônomos</title>
+    <meta name="description" content="O painel financeiro definitivo para prestadores de serviços digitais e MEIs." />
+    
+    <!-- Pre-render styles to avoid "text list" look on slow loads -->
+    <style>
+      body { 
+        background-color: #000; 
+        color: #fff; 
+        margin: 0; 
+        font-family: system-ui, -apple-system, sans-serif;
+        -webkit-font-smoothing: antialiased;
+      }
+      #root { min-height: 100vh; }
+    </style>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   </head>
-  <body>
+  <body class="bg-black antialiased">
     <div id="root"></div>
     <script type="module" src="/main.jsx"></script>
   </body>
