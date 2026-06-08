@@ -80,6 +80,10 @@ export const FinancialProvider = ({ children }) => {
     if (user) updateSettings({ ...settings, darkMode: newMode });
   };
 
+  const signOut = async () => {
+    await supabase.auth.signOut();
+  };
+
   if (loading && user) {
     return <div className="flex items-center justify-center h-screen dark:bg-gray-900 dark:text-white">Carregando painel financeiro...</div>;
   }
@@ -94,7 +98,8 @@ export const FinancialProvider = ({ children }) => {
       addRevenue,
       addExpense,
       updateSettings,
-      toggleDarkMode
+      toggleDarkMode,
+      signOut
     }}>
       <div className={settings.darkMode ? 'dark' : ''}>
         {children}

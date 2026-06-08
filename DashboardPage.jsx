@@ -22,58 +22,62 @@ const DashboardPage = () => {
     new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
 
   return (
-    <div className="p-4 md:p-6">
-      <h1 className="text-3xl font-bold mb-6 text-gray-800 dark:text-gray-200">Dashboard</h1>
+    <div className="max-w-7xl mx-auto">
+      <div className="flex flex-col md:flex-row md:items-center justify-between mb-10 gap-4">
+        <div>
+          <h1 className="text-4xl font-black text-slate-900 dark:text-white tracking-tight">Dashboard</h1>
+          <p className="text-slate-500 mt-1 font-medium">Bem-vindo, veja como estão suas finanças hoje.</p>
+        </div>
 
-      <div className="mb-8">
         <a href="https://www.nfse.gov.br/EmissorNacional/" target="_blank" rel="noopener noreferrer"
-           className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+           className="inline-flex items-center px-6 py-4 bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold rounded-2xl hover:scale-105 transition-all shadow-xl shadow-slate-200 dark:shadow-none text-sm">
           Emitir Nota Fiscal (NFS-e)
         </a>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
         <Card title="Faturamento Bruto (Mês)">
-          <p className="text-2xl font-semibold text-indigo-600 dark:text-indigo-400">
+          <p className="text-3xl font-black text-indigo-600 dark:text-indigo-400 tracking-tighter">
             {formatCurrency(faturamentoBrutoMes)}
           </p>
         </Card>
         <Card title="Recebimentos Confirmados">
-          <p className="text-2xl font-semibold text-green-600 dark:text-green-400">
+          <p className="text-3xl font-black text-emerald-600 dark:text-emerald-400 tracking-tighter">
             {formatCurrency(recebimentosConfirmados)}
           </p>
         </Card>
         <Card title="Despesas (Mês)">
-          <p className="text-2xl font-semibold text-red-600 dark:text-red-400">
+          <p className="text-3xl font-black text-rose-600 dark:text-rose-400 tracking-tighter">
             {formatCurrency(despesasMes)}
           </p>
         </Card>
-        <Card title="Lucro Líquido">
-          <p className="text-2xl font-semibold text-blue-600 dark:text-blue-400">
-            {formatCurrency(lucroLiquido)}
-          </p>
-        </Card>
-        <Card title="Saldo em Caixa">
-          <p className="text-2xl font-semibold text-purple-600 dark:text-purple-400">
-            {formatCurrency(saldoCaixa)}
-          </p>
-        </Card>
         <Card title="Salário Disponível">
-          <p className="text-2xl font-semibold text-teal-600 dark:text-teal-400">
+          <p className="text-3xl font-black text-amber-500 tracking-tighter">
             {formatCurrency(salarioDisponivel)}
           </p>
         </Card>
-        <Card title="Reserva de Emergência">
-          <p className="text-2xl font-semibold text-yellow-600 dark:text-yellow-400">
-            {formatCurrency(valorReservaEmergencia)}
-          </p>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-10">
+        <div className="lg:col-span-1">
+           <PaydayIndicator canPay={possoMePagarHoje} />
+        </div>
+        <Card title="Status do Caixa" className="lg:col-span-2">
+           <div className="grid grid-cols-2 md:grid-cols-3 gap-8">
+              <div>
+                <p className="text-xs font-bold text-slate-400 mb-1">Lucro Líquido</p>
+                <p className="text-xl font-bold text-slate-900 dark:text-white">{formatCurrency(lucroLiquido)}</p>
+              </div>
+              <div>
+                <p className="text-xs font-bold text-slate-400 mb-1">Saldo em Caixa</p>
+                <p className="text-xl font-bold text-slate-900 dark:text-white">{formatCurrency(saldoCaixa)}</p>
+              </div>
+              <div>
+                <p className="text-xs font-bold text-slate-400 mb-1">Reserva Emergência</p>
+                <p className="text-xl font-bold text-slate-900 dark:text-white">{formatCurrency(valorReservaEmergencia)}</p>
+              </div>
+           </div>
         </Card>
-        <Card title="Meta de Faturamento (Mês)">
-          <p className="text-2xl font-semibold text-gray-600 dark:text-gray-400">
-            {formatCurrency(settings.monthlyGoal)}
-          </p>
-        </Card>
-        <PaydayIndicator canPay={possoMePagarHoje} />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
