@@ -1,93 +1,107 @@
 import React, { useState } from 'react';
 import { supabase } from './supabase';
-import { motion } from 'framer-motion';
-import { Wallet, ArrowRight, Sparkles } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Wallet, ArrowRight, Sparkles, Mail, Lock, Loader2 } from 'lucide-react';
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [isSignUp, setIsSignUp] = useState(false);
 
   const handleLogin = async (e) => {
     e.preventDefault();
     setLoading(true);
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-    if (error) alert(error.message);
-    setLoading(false);
-  };
+    try {
+      const { error } = isSignUp 
+        ? await supabase.auth.signUp({ email, password })
+        : await supabase.auth.signInWithPassword({ email, password });
 
-  const handleSignUp = async () => {
-    setLoading(true);
-    const { error } = await supabase.auth.signUp({ email, password });
-    if (error) alert(error.message);
-    else alert('Conta criada com sucesso! Tente fazer login agora.');
-    setLoading(false);
+      if (error) throw error;
+      if (isSignUp) alert('Verifique seu e-mail ou faça login agora!');
+    } catch (err) {
+      alert(err.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#0a0a0a] overflow-hidden">
-      {/* Background Orbs */}
-      <div className="absolute top-0 -left-4 w-72 h-72 bg-indigo-500 rounded-full mix-blend-multiply filter blur-[128px] opacity-20 animate-blob"></div>
-      <div className="absolute bottom-0 -right-4 w-72 h-72 bg-purple-500 rounded-full mix-blend-multiply filter blur-[128px] opacity-20 animate-blob animation-delay-2000"></div>
+    <div className="min-h-screen flex items-center justify-center bg-[#050505] relative overflow-hidden px-4">
+      {/* Ambient Lighting */}
+      <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-indigo-600/10 blur-[120px] rounded-full" />
+      <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-violet-600/10 blur-[120px] rounded-full" />
 
       <motion.div 
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="max-w-md w-full z-10 p-4"
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        className="w-full max-w-[420px] z-10"
       >
-        <div className="bg-white/5 backdrop-blur-2xl p-8 rounded-[2.5rem] border border-white/10 shadow-2xl">
-          <div className="mb-8 text-center">
-            <div className="inline-flex items-center justify-center w-14 h-14 bg-gradient-to-tr from-indigo-600 to-violet-500 rounded-2xl mb-6 shadow-xl">
-              <Wallet className="text-white w-7 h-7" />
-            </div>
-            <h2 className="text-3xl font-bold text-white tracking-tight">MEI Finance</h2>
-            <p className="mt-2 text-slate-400 font-medium">Sua empresa, sob controle.</p>
+        <div className="text-center mb-10">
+          <motion.div 
+            whileHover={{ scale: 1.05 }}
+            className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-indigo-500 to-violet-600 rounded-2xl shadow-2xl shadow-indigo-500/20 mb-6"
+          >
+            <Wallet className="text-white w-8 h-8" />
+          </motion.div>
+          <h1 className="text-4xl font-black text-white tracking-tight mb-2">MEI Finance</h1>
+          <p className="text-slate-400 font-medium">Gestão profissional para mentes criativas.</p>
+        </div>
+
+        <div className="bg-[#0f0f0f] border border-white/5 rounded-[2.5rem] p-8 shadow-3xl">
+          <div className="flex bg-black/40 p-1 rounded-xl mb-8">
+            <button 
+              onClick={() => setIsSignUp(false)}
+              className={`flex-1 py-2 text-sm font-bold rounded-lg transition-all ${!isSignUp ? 'bg-white/10 text-white shadow-sm' : 'text-slate-500'}`}
+            >
+              Entrar
+            </button>
+            <button 
+              onClick={() => setIsSignUp(true)}
+              className={`flex-1 py-2 text-sm font-bold rounded-lg transition-all ${isSignUp ? 'bg-white/10 text-white shadow-sm' : 'text-slate-500'}`}
+            >
+              Cadastrar
+            </button>
           </div>
 
-          <form className="space-y-5" onSubmit={handleLogin}>
-            <div className="group space-y-2">
-              <label className="text-xs font-bold text-slate-500 uppercase tracking-widest ml-1">E-mail</label>
-              <input
-                type="email"
-                required
-                className="w-full px-5 py-4 rounded-2xl border border-white/5 bg-white/5 text-white focus:ring-2 focus:ring-indigo-500 transition-all outline-none"
-                placeholder="exemplo@email.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
+          <form className="space-y-6" onSubmit={handleLogin}>
+            <div className="space-y-2">
+              <div className="relative">
+                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+                <input
+                  type="email"
+                  required
+                  className="w-full pl-12 pr-4 py-4 rounded-2xl bg-white/[0.03] border border-white/5 text-white placeholder-slate-600 focus:ring-2 focus:ring-indigo-500 transition-all outline-none"
+                  placeholder="E-mail"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
+              </div>
             </div>
             
             <div className="space-y-2">
-              <label className="text-xs font-bold text-slate-500 uppercase tracking-widest ml-1">Senha</label>
-              <input
-                type="password"
-                required
-                className="w-full px-5 py-4 rounded-2xl border border-white/5 bg-white/5 text-white focus:ring-2 focus:ring-indigo-500 transition-all outline-none"
-                placeholder="••••••••"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
+              <div className="relative">
+                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+                <input
+                  type="password"
+                  required
+                  className="w-full pl-12 pr-4 py-4 rounded-2xl bg-white/[0.03] border border-white/5 text-white placeholder-slate-600 focus:ring-2 focus:ring-indigo-500 transition-all outline-none"
+                  placeholder="Senha"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+              </div>
             </div>
 
             <button 
               type="submit" 
               disabled={loading}
-              className="w-full py-4 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-2xl transition-all flex items-center justify-center gap-2 group shadow-lg shadow-indigo-500/20"
+              className="w-full py-4 bg-white text-black font-black rounded-2xl transition-all flex items-center justify-center gap-2 hover:bg-slate-200 disabled:opacity-50"
             >
-              {loading ? 'Carregando...' : 'Acessar agora'}
-              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : isSignUp ? 'Criar minha conta' : 'Entrar no painel'}
+              {!loading && <ArrowRight className="w-5 h-5" />}
             </button>
           </form>
-
-          <div className="mt-8 pt-8 border-t border-white/5 flex flex-col items-center">
-            <button 
-              onClick={handleSignUp}
-              className="text-slate-400 hover:text-white text-sm font-medium transition-colors flex items-center gap-2"
-            >
-              <Sparkles className="w-4 h-4 text-indigo-400" />
-              Não tem conta? Comece grátis
-            </button>
-          </div>
         </div>
       </motion.div>
     </div>

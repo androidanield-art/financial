@@ -22,15 +22,15 @@ const DashboardPage = () => {
     new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
 
   return (
-    <div className="max-w-7xl mx-auto">
-      <div className="flex flex-col md:flex-row md:items-center justify-between mb-10 gap-4">
+    <div className="max-w-7xl mx-auto space-y-10">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
-          <h1 className="text-4xl font-black text-slate-900 dark:text-white tracking-tight">Dashboard</h1>
-          <p className="text-slate-500 mt-1 font-medium">Bem-vindo, veja como estão suas finanças hoje.</p>
+          <p className="text-indigo-500 font-bold text-sm uppercase tracking-widest mb-2">Visão Geral</p>
+          <h1 className="text-4xl font-black text-white tracking-tight">Dashboard</h1>
         </div>
 
         <a href="https://www.nfse.gov.br/EmissorNacional/" target="_blank" rel="noopener noreferrer"
-           className="inline-flex items-center px-6 py-4 bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold rounded-2xl hover:scale-105 transition-all shadow-xl shadow-slate-200 dark:shadow-none text-sm">
+           className="inline-flex items-center px-6 py-4 bg-white text-black font-black rounded-2xl hover:bg-slate-200 transition-all shadow-xl shadow-indigo-500/5 text-sm">
           Emitir Nota Fiscal (NFS-e)
         </a>
       </div>

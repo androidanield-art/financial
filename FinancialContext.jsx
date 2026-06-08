@@ -20,12 +20,17 @@ export const FinancialProvider = ({ children }) => {
 
   // Gerenciar Sessão do Usuário
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    const initAuth = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
       setUser(session?.user ?? null);
-    });
+      setLoading(false);
+    };
+
+    initAuth();
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null);
+      setLoading(false);
     });
 
     return () => subscription.unsubscribe();
@@ -59,7 +64,20 @@ export const FinancialProvider = ({ children }) => {
   }, [user]);
 
   const stats = useMemo(() => {
-    return calculateFinances(revenues, expenses, commitments, settings);
+    const finances = calculateFinances(revenues, expenses, commitments, settings);
+    const faturamentoBrutoMes = revenues.reduce((acc, curr) => acc + Number(curr.value), 0);
+    
+    return {
+      ...finances,
+      faturamentoBrutoMes,
+      recebimentosConfirmados: finances.received,
+      despesasMes: finances.paidExpenses,
+      lucroLiquido: finances.received - finances.paidExpenses,
+      saldoCaixa: finances.received - finances.paidExpenses,
+      possoMePagarHoje: finances.canPayToday,
+      valorReservaEmergencia: finances.emergencyReserve,
+      contasAVencer: commitments // Simplificado
+    };
   }, [revenues, expenses, commitments, settings]);
 
   // Ações de persistência
@@ -93,8 +111,16 @@ export const FinancialProvider = ({ children }) => {
     await supabase.auth.signOut();
   };
 
-  if (loading && user) {
-    return <div className="flex items-center justify-center h-screen dark:bg-gray-900 dark:text-white">Carregando painel financeiro...</div>;
+  // Loader elegante para não parecer travado
+  if (loading && !user) {
+    return (
+      <div className="min-h-screen bg-[#050505] flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-12 h-12 border-4 border-indigo-500/20 border-t-indigo-500 rounded-full animate-spin" />
+          <p className="text-slate-400 font-medium animate-pulse text-sm">Autenticando...</p>
+        </div>
+      </div>
+    );
   }
 
   return (
