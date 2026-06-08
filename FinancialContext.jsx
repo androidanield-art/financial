@@ -27,7 +27,7 @@ export const FinancialProvider = ({ children }) => {
         setConnectionStatus('offline');
       } else {
         setUser(session?.user ?? null);
-        setConnectionStatus('online');
+        setConnectionStatus(session ? 'online' : 'checking');
       }
       setLoading(false);
     };
@@ -36,7 +36,10 @@ export const FinancialProvider = ({ children }) => {
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null);
-      if (session) setConnectionStatus('online');
+      if (session) {
+        setConnectionStatus('online');
+      }
+      setLoading(false);
     });
 
     return () => subscription.unsubscribe();

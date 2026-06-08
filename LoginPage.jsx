@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { supabase } from './supabase';
-import { motion } from 'framer-motion';
-import { Wallet, ArrowRight, Sparkles, Mail, Lock, Loader2, Wifi, WifiOff } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Wallet, ArrowRight, Sparkles, Mail, Lock, Loader2, Wifi, WifiOff, ShieldCheck } from 'lucide-react';
 import { useFinancial } from './FinancialContext';
 
 const LoginPage = () => {

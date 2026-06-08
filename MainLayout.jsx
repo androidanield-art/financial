@@ -4,10 +4,10 @@ import Sidebar from './Sidebar';
 
 const MainLayout = () => {
   return (
-    <div className="flex min-h-screen w-full bg-[#050505] selection:bg-indigo-500/30">
+    <div className="flex min-h-screen bg-[#050505] selection:bg-indigo-500/30 font-sans w-full">
       <Sidebar />
-      <main className="flex-1 ml-64 min-h-screen overflow-y-auto">
-        <div className="max-w-[1400px] mx-auto p-6 md:p-12">
+      <main className="flex-1 lg:ml-64 min-h-screen relative flex flex-col items-center">
+        <div className="w-full max-w-7xl p-6 md:p-10 lg:p-12">
           <Outlet />
         </div>
       </main>
