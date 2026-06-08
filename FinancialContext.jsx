@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useMemo, useState, useEffect } from 'react';
-import { supabase } from '../lib/supabase';
+import { supabase } from './supabase';
 import { calculateFinances } from '../utils/financialCalculations';
 
 const FinancialContext = createContext();
