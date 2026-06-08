@@ -11,9 +11,10 @@ const DashboardPage = () => {
     paidExpenses,
     netProfit,
     availableBalance,
-    salarioDisponivel,
+    availableSalary,
     emergencyReserve,
-    possoMePagarHoje
+    canPayToday,
+    nextBills
   } = useFinancial();
 
   const format = (v) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(v);
@@ -39,7 +40,7 @@ const DashboardPage = () => {
           { label: 'Receita Total', val: currentMonthRevenue, color: 'text-white', icon: ArrowUpRight },
           { label: 'Já Recebido', val: received, color: 'text-emerald-400', icon: Wallet },
           { label: 'Despesas', val: paidExpenses, color: 'text-rose-500', icon: ArrowDownRight },
-          { label: 'Salário Livre', val: salarioDisponivel, color: 'text-indigo-400', icon: Target },
+          { label: 'Salário Livre', val: availableSalary, color: 'text-indigo-400', icon: Target },
         ].map((item, i) => (
           <Card key={i} className="border-white/5 bg-white/[0.02]">
             <div className="flex items-center justify-between mb-4 text-slate-500">
@@ -53,21 +54,21 @@ const DashboardPage = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-10">
         <div className="lg:col-span-1">
-           <PaydayIndicator canPay={possoMePagarHoje} />
+           <PaydayIndicator canPay={canPayToday} />
         </div>
         <Card title="Status do Caixa" className="lg:col-span-2">
            <div className="grid grid-cols-2 md:grid-cols-3 gap-8">
               <div>
                 <p className="text-xs font-bold text-slate-400 mb-1">Lucro Líquido</p>
-                <p className="text-xl font-bold text-slate-900 dark:text-white">{formatCurrency(lucroLiquido)}</p>
+                <p className="text-xl font-bold text-slate-900 dark:text-white">{format(netProfit)}</p>
               </div>
               <div>
                 <p className="text-xs font-bold text-slate-400 mb-1">Saldo em Caixa</p>
-                <p className="text-xl font-bold text-slate-900 dark:text-white">{formatCurrency(saldoCaixa)}</p>
+                <p className="text-xl font-bold text-slate-900 dark:text-white">{format(availableBalance)}</p>
               </div>
               <div>
                 <p className="text-xs font-bold text-slate-400 mb-1">Reserva Emergência</p>
-                <p className="text-xl font-bold text-slate-900 dark:text-white">{formatCurrency(valorReservaEmergencia)}</p>
+                <p className="text-xl font-bold text-slate-900 dark:text-white">{format(emergencyReserve)}</p>
               </div>
            </div>
         </Card>
@@ -75,15 +76,15 @@ const DashboardPage = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card title="Contas a Vencer (Próximos Dias)">
-          {contasAVencer.length > 0 ? (
+          {nextBills && nextBills.length > 0 ? (
             <ul>
-              {contasAVencer.slice(0, 5).map((item, index) => (
+              {nextBills.slice(0, 5).map((item, index) => (
                 <li key={index} className="flex justify-between items-center py-2 border-b border-gray-200 dark:border-gray-700 last:border-b-0">
                   <span className="text-gray-700 dark:text-gray-300">
                     {item.description} ({item.type})
                   </span>
                   <span className={`font-medium ${item.type === 'Receita' ? 'text-green-500' : 'text-red-500'}`}>
-                    {formatCurrency(item.value)}
+                    {format(item.value)}
                   </span>
                 </li>
               ))}

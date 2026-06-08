@@ -29,100 +29,107 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="fixed inset-0 w-full h-full flex items-center justify-center bg-[#050505] overflow-hidden px-4 z-[9999]">
-      {/* Ambient Lighting */}
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-indigo-600/10 blur-[120px] rounded-full" />
-        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-violet-600/10 blur-[120px] rounded-full" />
-      </div>
+    <div className="min-h-screen w-full flex items-center justify-center bg-[#050505] relative overflow-hidden px-4">
+      {/* Background Glows */}
+      <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] bg-indigo-600/10 blur-[120px] rounded-full pointer-events-none" />
+      <div className="absolute bottom-[-20%] right-[-10%] w-[50%] h-[50%] bg-violet-600/10 blur-[120px] rounded-full pointer-events-none" />
 
       <motion.div 
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="w-full max-w-[420px] z-10"
+        className="w-full max-w-[440px] z-10"
       >
-        <div className="text-center mb-10">
+        <div className="text-center mb-8">
           <motion.div 
-            whileHover={{ scale: 1.05 }}
-            className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-indigo-500 to-violet-600 rounded-2xl shadow-2xl shadow-indigo-500/20 mb-6"
+            whileHover={{ scale: 1.05, rotate: 5 }}
+            className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-indigo-500 to-violet-600 rounded-[2rem] shadow-2xl shadow-indigo-500/20 mb-6"
           >
-            <Wallet className="text-white w-8 h-8" />
+            <Wallet className="text-white w-10 h-10" />
           </motion.div>
-          <h1 className="text-4xl font-black text-white tracking-tight mb-2">MEI Finance</h1>
-          <p className="text-slate-400 font-medium">Gestão profissional para mentes criativas.</p>
-          
-          <div className="mt-4 flex justify-center">
+          <h1 className="text-5xl font-black text-white tracking-tighter mb-3 italic">
+            MEI<span className="text-indigo-500">.</span>
+          </h1>
+          <p className="text-slate-400 text-lg font-medium">Finanças sob controle, mente livre.</p>
+
+          <div className="mt-6 flex justify-center">
             {connectionStatus === 'online' ? (
-              <span className="flex items-center gap-2 text-[10px] font-bold text-emerald-500 uppercase tracking-widest bg-emerald-500/10 px-3 py-1 rounded-full">
-                <Wifi size={12} /> Conectado ao Banco
+              <span className="flex items-center gap-2 text-[10px] font-bold text-emerald-400 uppercase tracking-widest bg-emerald-400/5 border border-emerald-400/10 px-4 py-1.5 rounded-full">
+                <Wifi size={12} /> Sistema Online
               </span>
             ) : connectionStatus === 'offline' ? (
-              <span className="flex items-center gap-2 text-[10px] font-bold text-rose-500 uppercase tracking-widest bg-rose-500/10 px-3 py-1 rounded-full">
-                <WifiOff size={12} /> Erro de Conexão
+              <span className="flex items-center gap-2 text-[10px] font-bold text-rose-400 uppercase tracking-widest bg-rose-400/5 border border-rose-400/10 px-4 py-1.5 rounded-full">
+                <WifiOff size={12} /> Offline
               </span>
             ) : (
-              <span className="flex items-center gap-2 text-[10px] font-bold text-slate-500 uppercase tracking-widest bg-slate-500/10 px-3 py-1 rounded-full animate-pulse">
-                Verificando Banco...
+              <span className="flex items-center gap-2 text-[10px] font-bold text-slate-500 uppercase tracking-widest bg-white/5 px-4 py-1.5 rounded-full animate-pulse">
+                Sincronizando...
               </span>
             )}
           </div>
         </div>
 
-        <div className="bg-[#0f0f0f] border border-white/5 rounded-[2.5rem] p-8 shadow-3xl">
-          <div className="flex bg-black/40 p-1 rounded-xl mb-8">
+        <div className="bg-white/[0.02] backdrop-blur-xl border border-white/5 rounded-[3rem] p-10 shadow-3xl">
+          <div className="flex bg-black/20 p-1.5 rounded-[1.5rem] mb-10 border border-white/5">
             <button 
               onClick={() => setIsSignUp(false)}
-              className={`flex-1 py-2 text-sm font-bold rounded-lg transition-all ${!isSignUp ? 'bg-white/10 text-white shadow-sm' : 'text-slate-500'}`}
+              className={`flex-1 py-3 text-sm font-bold rounded-[1.1rem] transition-all ${!isSignUp ? 'bg-indigo-600 text-white shadow-xl shadow-indigo-600/20' : 'text-slate-500 hover:text-slate-300'}`}
             >
               Entrar
             </button>
             <button 
               onClick={() => setIsSignUp(true)}
-              className={`flex-1 py-2 text-sm font-bold rounded-lg transition-all ${isSignUp ? 'bg-white/10 text-white shadow-sm' : 'text-slate-500'}`}
+              className={`flex-1 py-3 text-sm font-bold rounded-[1.1rem] transition-all ${isSignUp ? 'bg-indigo-600 text-white shadow-xl shadow-indigo-600/20' : 'text-slate-500 hover:text-slate-300'}`}
             >
-              Cadastrar
+              Criar Conta
             </button>
           </div>
 
           <form className="space-y-6" onSubmit={handleLogin}>
-            <div className="space-y-2">
+            <div className="space-y-1.5">
+              <label className="text-xs font-bold text-slate-500 uppercase tracking-widest ml-4">E-mail</label>
               <div className="relative">
-                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+                <Mail className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-600" />
                 <input
                   type="email"
                   required
-                  className="w-full pl-12 pr-4 py-4 rounded-2xl bg-white/[0.03] border border-white/5 text-white placeholder-slate-600 focus:ring-2 focus:ring-indigo-500 transition-all outline-none"
-                  placeholder="E-mail"
+                  className="w-full pl-14 pr-6 py-4.5 rounded-[1.5rem] bg-white/[0.03] border border-white/5 text-white placeholder-slate-600 focus:ring-2 focus:ring-indigo-500 transition-all outline-none text-base"
+                  placeholder="exemplo@email.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                 />
               </div>
             </div>
             
-            <div className="space-y-2">
+            <div className="space-y-1.5">
+              <label className="text-xs font-bold text-slate-500 uppercase tracking-widest ml-4">Senha</label>
               <div className="relative">
-                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+                <Lock className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-600" />
                 <input
                   type="password"
                   required
-                  className="w-full pl-12 pr-4 py-4 rounded-2xl bg-white/[0.03] border border-white/5 text-white placeholder-slate-600 focus:ring-2 focus:ring-indigo-500 transition-all outline-none"
-                  placeholder="Senha"
+                  className="w-full pl-14 pr-6 py-4.5 rounded-[1.5rem] bg-white/[0.03] border border-white/5 text-white placeholder-slate-600 focus:ring-2 focus:ring-indigo-500 transition-all outline-none text-base"
+                  placeholder="••••••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                 />
               </div>
             </div>
 
-            <button 
-              type="submit" 
+            <button
+              type="submit"
               disabled={loading}
-              className="w-full py-4 bg-white text-black font-black rounded-2xl transition-all flex items-center justify-center gap-2 hover:bg-slate-200 disabled:opacity-50"
+              className="w-full py-5 bg-white text-black font-black rounded-[1.5rem] transition-all flex items-center justify-center gap-3 hover:bg-slate-200 active:scale-[0.98] disabled:opacity-50 shadow-xl shadow-white/5 mt-4"
             >
-              {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : isSignUp ? 'Criar minha conta' : 'Entrar no painel'}
-              {!loading && <ArrowRight className="w-5 h-5" />}
+              {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : isSignUp ? 'Criar minha conta' : 'Acessar Painel'}
+              {!loading && <ArrowRight className="w-6 h-6" />}
             </button>
           </form>
         </div>
+
+        <p className="mt-8 text-center text-slate-600 text-sm font-medium">
+          <ShieldCheck className="inline-block w-4 h-4 mr-1 mb-0.5" /> 
+          Seus dados estão seguros e criptografados.
+        </p>
       </motion.div>
     </div>
   );

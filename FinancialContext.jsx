@@ -7,6 +7,7 @@ export const FinancialProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isInitializing, setIsInitializing] = useState(true);
+  const [connectionStatus, setConnectionStatus] = useState('checking'); // 'checking', 'online', 'offline'
   const [revenues, setRevenues] = useState([]);
   const [expenses, setExpenses] = useState([]);
   const [commitments, setCommitments] = useState([]);
@@ -22,10 +23,20 @@ export const FinancialProvider = ({ children }) => {
     let mounted = true;
 
     async function loadSession() {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (mounted) {
-        setUser(session?.user ?? null);
-        setIsInitializing(false);
+      try {
+        const { data: { session }, error } = await supabase.auth.getSession();
+        if (error) throw error;
+        if (mounted) {
+          setUser(session?.user ?? null);
+          setConnectionStatus('online');
+          setIsInitializing(false);
+        }
+      } catch (err) {
+        console.error("Erro ao carregar sessão:", err);
+        if (mounted) {
+          setConnectionStatus('offline');
+          setIsInitializing(false);
+        }
       }
     }
 
@@ -34,6 +45,7 @@ export const FinancialProvider = ({ children }) => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       if (mounted) {
         setUser(session?.user ?? null);
+        if (session) setConnectionStatus('online');
         setLoading(false);
       }
     });
@@ -113,7 +125,7 @@ export const FinancialProvider = ({ children }) => {
   }
 
   return (
-    <FinancialContext.Provider value={{ user, ...financialStats, settings, revenues, expenses, ...actions }}>
+    <FinancialContext.Provider value={{ user, connectionStatus, ...financialStats, settings, revenues, expenses, ...actions }}>
       <div className={settings.darkMode ? 'dark' : ''}>
         {children}
       </div>
