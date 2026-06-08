@@ -1,19 +1,32 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
+  :root {
+    --brand-primary: 79, 70, 229;
+    --brand-secondary: 139, 92, 246;
+  }
+
   body {
-    @apply bg-[#050505] text-slate-200 antialiased overflow-x-hidden selection:bg-indigo-500/30;
-    font-family: 'Inter', -apple-system, sans-serif;
-    background-image: 
-      radial-gradient(circle at 50% -10%, rgba(79, 70, 229, 0.08) 0%, transparent 70%);
-    background-attachment: fixed;
+    @apply bg-[#000000] text-white antialiased overflow-x-hidden selection:bg-white selection:text-black;
+    font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+    /* Nike style: Clean backgrounds, focus on typography */
     min-height: 100vh;
   }
   .dark body {
     @apply bg-[#050505] text-slate-100;
+  }
+}
+
+@layer components {
+  .glass-card {
+    @apply bg-white/[0.02] backdrop-blur-2xl border border-white/[0.06] shadow-[0_24px_48px_-12px_rgba(0,0,0,0.5)];
+  }
+  
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-br from-white via-white to-white/40;
   }
 }
