@@ -2,7 +2,7 @@ import React from 'react';
 import { useFinancial } from './FinancialContext';
 import Card from './Card';
 import PaydayIndicator from './PaydayIndicator';
-import { ArrowUpRight, ArrowDownRight, Wallet, Target } from 'lucide-react';
+import { ArrowUpRight, ArrowDownRight, Wallet, Clock, Target } from 'lucide-react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 const DashboardPage = () => {
@@ -11,6 +11,7 @@ const DashboardPage = () => {
     received,
     cashBalance,
     paidExpenses,
+    pendingExpenses,
     netProfit,
     proLabore,
     emergencyReserve,
@@ -48,9 +49,9 @@ const DashboardPage = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
         {[
           { label: 'Faturamento', val: currentMonthRevenue, color: 'text-white', icon: ArrowUpRight },
-          { label: 'Em Caixa', val: cashBalance, color: 'text-emerald-400', icon: Wallet },
-          { label: 'Gastos + Fixos', val: paidExpenses + totalFixedCosts, color: 'text-rose-400', icon: ArrowDownRight },
-          { label: 'Renda Pró-labore', val: proLabore, color: 'text-indigo-400', icon: Target },
+          { label: 'Em Caixa (Líquido)', val: cashBalance, color: 'text-emerald-400', icon: Wallet },
+          { label: 'Saídas / Gastos', val: paidExpenses, color: 'text-rose-400', icon: ArrowDownRight },
+          { label: 'Contas a Vencer', val: pendingExpenses + totalFixedCosts, color: 'text-amber-400', icon: Clock },
         ].map((item, i) => (
           <Card key={i} className="relative overflow-hidden group">
             <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:opacity-30 group-hover:scale-125 transition-all duration-700">
@@ -67,7 +68,7 @@ const DashboardPage = () => {
            <PaydayIndicator canPay={canPayToday} />
         </div>
         <Card title="Status do Caixa" className="lg:col-span-8">
-           <div className="grid grid-cols-2 gap-8">
+           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               <div>
                 <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-3">Lucro Líquido</p>
                 <p className="text-2xl font-black text-white tracking-tight">{format(netProfit)}</p>
@@ -75,6 +76,10 @@ const DashboardPage = () => {
               <div>
                 <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-3">Reserva de Segurança</p>
                 <p className="text-2xl font-black text-indigo-400 tracking-tight">{format(emergencyReserve)}</p>
+              </div>
+              <div>
+                <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-3">Pró-labore Disponível</p>
+                <p className="text-2xl font-black text-indigo-400 tracking-tight">{format(proLabore)}</p>
               </div>
            </div>
         </Card>
