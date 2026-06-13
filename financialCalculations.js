@@ -1,6 +1,6 @@
 export const calculateFinances = (revenues, expenses, commitments, settings) => {
   const now = new Date();
-  const todayStr = now.toISOString().split('T')[0];
+  const todayStr = new Date().toLocaleDateString('en-CA');
   const currentMonth = now.getMonth();
   const currentYear = now.getFullYear();
 
@@ -18,7 +18,8 @@ export const calculateFinances = (revenues, expenses, commitments, settings) => 
   // --- 2. REGIME DE COMPETÊNCIA (O QUE PERTENCE A ESTE MÊS) ---
   const totalMonthlyRevenue = revenues
     .filter(r => {
-      const d = new Date(r.date);
+      // Garante parsing correto ignorando fuso horário para o mês atual
+      const d = new Date(r.date + 'T12:00:00');
       return d.getMonth() === currentMonth && d.getFullYear() === currentYear;
     })
     .reduce((acc, curr) => acc + Number(curr.value), 0);
@@ -27,7 +28,7 @@ export const calculateFinances = (revenues, expenses, commitments, settings) => 
   
   const variableExpenses = expenses
     .filter(e => {
-      const d = new Date(e.date);
+      const d = new Date(e.date + 'T12:00:00');
       return d.getMonth() === currentMonth && d.getFullYear() === currentYear;
     })
     .reduce((acc, curr) => acc + Number(curr.value), 0);
@@ -59,10 +60,16 @@ export const calculateFinances = (revenues, expenses, commitments, settings) => 
   const timelineData = Array.from({ length: Math.ceil(daysInMonth / 5) }, (_, i) => {
     const dayLimit = (i + 1) * 5;
     const revUntil = revenues
-      .filter(r => new Date(r.date).getDate() <= dayLimit && r.status === 'Recebido')
+      .filter(r => {
+        const d = new Date(r.date + 'T12:00:00');
+        return d.getMonth() === currentMonth && d.getFullYear() === currentYear && d.getDate() <= dayLimit && r.status === 'Recebido';
+      })
       .reduce((acc, curr) => acc + Number(curr.value), 0);
     const expUntil = expenses
-      .filter(e => new Date(e.date).getDate() <= dayLimit && e.status === 'Pago')
+      .filter(e => {
+        const d = new Date(e.date + 'T12:00:00');
+        return d.getMonth() === currentMonth && d.getFullYear() === currentYear && d.getDate() <= dayLimit && e.status === 'Pago';
+      })
       .reduce((acc, curr) => acc + Number(curr.value), 0);
     
     return {

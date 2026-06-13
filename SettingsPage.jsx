@@ -4,7 +4,7 @@ import Card from './Card';
 import { Save, Building, Target, Percent, ShieldCheck, Info, Trash2, AlertTriangle, RefreshCcw } from 'lucide-react';
 
 const SettingsPage = () => {
-  const { settings, updateSettings, resetAllData } = useFinancial();
+  const { settings, updateSettings, resetAllData, clearTransactions } = useFinancial();
   const [formData, setFormData] = useState({ ...settings });
 
   useEffect(() => {
@@ -18,6 +18,17 @@ const SettingsPage = () => {
       alert('Configurações atualizadas com sucesso!');
     } else {
       alert('Erro ao atualizar: ' + result.error.message);
+    }
+  };
+
+  const handleClearTransactions = async () => {
+    const confirmed = window.confirm(
+      "Isso apagará todas as suas Entradas e Despesas, mas manterá seus Compromissos Fixos e configurações. Deseja continuar?"
+    );
+    
+    if (confirmed) {
+      const result = await clearTransactions();
+      if (result.success) alert('Movimentações de caixa limpas com sucesso.');
     }
   };
 
@@ -119,12 +130,20 @@ const SettingsPage = () => {
                 <p className="text-slate-500 text-sm mt-1">Apaga todas as entradas, saídas e configurações para começar do zero.</p>
               </div>
             </div>
-            <button 
-              onClick={handleReset}
-              className="bg-rose-500/10 hover:bg-rose-500 text-rose-500 hover:text-white font-bold py-3 px-8 rounded-xl transition-all flex items-center gap-2 border border-rose-500/20"
-            >
-              <RefreshCcw size={18} /> Resetar Tudo
-            </button>
+            <div className="flex flex-col gap-3">
+              <button 
+                onClick={handleClearTransactions}
+                className="bg-amber-500/10 hover:bg-amber-500 text-amber-500 hover:text-white font-bold py-3 px-8 rounded-xl transition-all flex items-center gap-2 border border-amber-500/20"
+              >
+                <Trash2 size={18} /> Limpar Caixa
+              </button>
+              <button 
+                onClick={handleReset}
+                className="bg-rose-500/10 hover:bg-rose-500 text-rose-500 hover:text-white font-bold py-3 px-8 rounded-xl transition-all flex items-center gap-2 border border-rose-500/20"
+              >
+                <RefreshCcw size={18} /> Resetar Tudo
+              </button>
+            </div>
           </div>
         </Card>
       </div>

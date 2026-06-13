@@ -89,12 +89,8 @@ export const FinancialProvider = ({ children }) => {
 
   const financialStats = useMemo(() => {
     const finances = calculateFinances(revenues, expenses, commitments, settings);
-    const currentMonthRevenue = revenues.reduce((acc, curr) => acc + Number(curr.value), 0);
-    
     return {
       ...finances,
-      currentMonthRevenue,
-      netProfit: finances.received - finances.paidExpenses,
       nextBills: commitments || []
     };
   }, [revenues, expenses, commitments, settings]);
@@ -152,6 +148,19 @@ export const FinancialProvider = ({ children }) => {
         updated_at: new Date() 
       });
       if (!error) setSettings(newSettings);
+    },
+    clearTransactions: async () => {
+      try {
+        await Promise.all([
+          supabase.from('revenues').delete().eq('user_id', user.id),
+          supabase.from('expenses').delete().eq('user_id', user.id)
+        ]);
+        setRevenues([]);
+        setExpenses([]);
+        return { success: true };
+      } catch (err) {
+        return { error: err };
+      }
     },
     resetAllData: async () => {
       try {
