@@ -8,11 +8,13 @@ export const calculateFinances = (revenues, expenses, commitments, settings) => 
   const paidExpenses = expenses
     .filter(e => e.status === 'Pago')
     .reduce((acc, curr) => acc + Number(curr.value), 0);
+
+  const pendingExpenses = expenses
+    .filter(e => e.status === 'Pendente')
+    .reduce((acc, curr) => acc + Number(curr.value), 0);
   
   // Compromissos fixos (templates mensais)
-  const commitmentsTotal = commitments.reduce((acc, curr) => acc + Number(curr.value), 0);
-  
-  const totalFixedCosts = commitmentsTotal;
+  const totalFixedCosts = commitments.reduce((acc, curr) => acc + Number(curr.value), 0);
   
   // Identifica compromissos que vencem nos próximos 5 dias ou já venceram este mês
   const urgentCommitments = commitments.filter(c => 
@@ -25,18 +27,21 @@ export const calculateFinances = (revenues, expenses, commitments, settings) => 
   // Saldo em conta hoje (Líquido disponível)
   const cashBalance = received - paidExpenses;
 
-  // Saldo Operacional = O que sobra para dividir entre MEI e Empresa
-  const operationalBalance = cashBalance - totalFixedCosts - emergencyReserve;
+  // LÓGICA DE SAÚDE FINANCEIRA:
+  // Saldo Operacional Real = Saldo em conta - (Contas Pendentes + Custos Fixos Projetados + Reserva)
+  // Isso garante que você só se pague se o dinheiro "sobrar" de verdade após todas as obrigações conhecidas.
+  const operationalBalance = cashBalance - pendingExpenses - totalFixedCosts - emergencyReserve;
 
   // Renda Pró-labore = A porcentagem do lucro que o MEI retira para viver
   const proLabore = Math.max(0, operationalBalance * (settings.withdrawalPercentage / 100));
 
   // Indicador "Posso me pagar hoje?"
-  const canPayToday = operationalBalance > 0 && received > (paidExpenses + totalFixedCosts);
+  const canPayToday = operationalBalance > 0;
 
   return { 
     received, 
     paidExpenses,
+    pendingExpenses,
     cashBalance,
     emergencyReserve, 
     proLabore,
