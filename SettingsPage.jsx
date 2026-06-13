@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useFinancial } from './FinancialContext';
 import Card from './Card';
-import { Save, Building, Target, Percent, ShieldCheck, Info } from 'lucide-react';
+import { Save, Building, Target, Percent, ShieldCheck, Info, Trash2, AlertTriangle, RefreshCcw } from 'lucide-react';
 
 const SettingsPage = () => {
-  const { settings, updateSettings } = useFinancial();
+  const { settings, updateSettings, resetAllData } = useFinancial();
   const [formData, setFormData] = useState({ ...settings });
 
   useEffect(() => {
@@ -18,6 +18,17 @@ const SettingsPage = () => {
       alert('Configurações atualizadas com sucesso!');
     } else {
       alert('Erro ao atualizar: ' + result.error.message);
+    }
+  };
+
+  const handleReset = async () => {
+    const confirmed = window.confirm(
+      "ATENÇÃO: Isso apagará permanentemente todas as suas receitas, despesas e compromissos fixos. Esta ação não pode ser desfeita. Deseja continuar?"
+    );
+    
+    if (confirmed) {
+      const result = await resetAllData();
+      if (result.success) alert('Todos os dados foram resetados com sucesso.');
     }
   };
 
@@ -95,6 +106,28 @@ const SettingsPage = () => {
           </button>
         </div>
       </form>
+
+      <div className="mt-12 pt-8 border-t border-white/5">
+        <Card title="Zona de Perigo" className="border border-rose-500/20 bg-rose-500/5">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+            <div className="flex items-start gap-4">
+              <div className="w-12 h-12 rounded-2xl bg-rose-500/20 text-rose-500 flex items-center justify-center shrink-0">
+                <AlertTriangle size={24} />
+              </div>
+              <div>
+                <h4 className="text-white font-bold">Resetar Inteligência Financeira</h4>
+                <p className="text-slate-500 text-sm mt-1">Apaga todas as entradas, saídas e configurações para começar do zero.</p>
+              </div>
+            </div>
+            <button 
+              onClick={handleReset}
+              className="bg-rose-500/10 hover:bg-rose-500 text-rose-500 hover:text-white font-bold py-3 px-8 rounded-xl transition-all flex items-center gap-2 border border-rose-500/20"
+            >
+              <RefreshCcw size={18} /> Resetar Tudo
+            </button>
+          </div>
+        </Card>
+      </div>
     </div>
   );
 };

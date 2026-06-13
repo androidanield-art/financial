@@ -7,30 +7,20 @@ import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 
 const DashboardPage = () => {
   const {
-    currentMonthRevenue,
-    received,
     cashBalance,
     paidExpenses,
-    pendingExpenses,
     overdueExpenses,
     upcomingExpenses,
     netProfit,
     proLabore,
     emergencyReserve,
     canPayToday,
-    nextBills,
-    totalFixedCosts
+    totalFixedCosts,
+    timelineData,
+    realizedRevenue
   } = useFinancial();
 
   const format = (v) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(v);
-
-  // Dados fictícios para o gráfico (em um sistema real, viriam do banco)
-  const chartData = [
-    { name: 'Sem 1', receita: currentMonthRevenue * 0.2, despesa: paidExpenses * 0.3 },
-    { name: 'Sem 2', receita: currentMonthRevenue * 0.5, despesa: paidExpenses * 0.4 },
-    { name: 'Sem 3', receita: currentMonthRevenue * 0.8, despesa: paidExpenses * 0.7 },
-    { name: 'Sem 4', receita: currentMonthRevenue, despesa: paidExpenses },
-  ];
 
   return (
     <div className="w-full space-y-20">
@@ -50,9 +40,9 @@ const DashboardPage = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-8">
         {[
-          { label: 'Faturamento', val: currentMonthRevenue, color: 'text-white', icon: ArrowUpRight },
+          { label: 'Faturamento Realizado', val: realizedRevenue, color: 'text-white', icon: ArrowUpRight },
           { label: 'Em Caixa (Líquido)', val: cashBalance, color: 'text-emerald-400', icon: Wallet },
-          { label: 'Saídas / Gastos', val: paidExpenses, color: 'text-rose-400', icon: ArrowDownRight },
+          { label: 'Total Pago', val: paidExpenses, color: 'text-rose-400', icon: ArrowDownRight },
           { label: 'Contas a Vencer', val: upcomingExpenses + totalFixedCosts, color: 'text-amber-400', icon: Clock },
           { label: 'Contas Vencidas', val: overdueExpenses, color: 'text-red-500', icon: AlertTriangle },
         ].map((item, i) => (
@@ -136,12 +126,20 @@ const DashboardPage = () => {
                   fillOpacity={1} 
                   fill="url(#colorRevenue)" 
                   strokeWidth={3}
+                  name="Recebido"
+                />
+                <Area 
+                  type="monotone" 
+                  dataKey="saldo" 
+                  stroke="#10b981" 
+                  fillOpacity={1} 
+                  fill="url(#colorBalance)" 
+                  strokeWidth={2}
+                  name="Saldo Real"
                 />
               </AreaChart>
             </ResponsiveContainer>
           </div>
-        </Card>
-      </div>
     </div>
   );
 };

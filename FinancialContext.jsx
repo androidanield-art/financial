@@ -153,6 +153,21 @@ export const FinancialProvider = ({ children }) => {
       });
       if (!error) setSettings(newSettings);
     },
+    resetAllData: async () => {
+      try {
+        await Promise.all([
+          supabase.from('revenues').delete().eq('user_id', user.id),
+          supabase.from('expenses').delete().eq('user_id', user.id),
+          supabase.from('commitments').delete().eq('user_id', user.id)
+        ]);
+        setRevenues([]);
+        setExpenses([]);
+        setCommitments([]);
+        return { success: true };
+      } catch (err) {
+        return { error: err };
+      }
+    },
     signOut: () => supabase.auth.signOut(),
     toggleDarkMode: () => setSettings(prev => ({ ...prev, darkMode: !prev.darkMode }))
   };

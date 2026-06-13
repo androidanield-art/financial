@@ -1,9 +1,11 @@
 export const calculateFinances = (revenues, expenses, commitments, settings) => {
   const now = new Date();
-  const todayDay = now.getDate();
   const todayStr = now.toISOString().split('T')[0];
+  const currentMonth = now.getMonth();
+  const currentYear = now.getFullYear();
 
-  const received = revenues
+  // --- 1. REGIME DE CAIXA (DINHEIRO QUE ENTROU/SAIU DE FATO) ---
+  const realizedRevenue = revenues
     .filter(r => r.status === 'Recebido')
     .reduce((acc, curr) => acc + Number(curr.value), 0);
 
@@ -11,10 +13,29 @@ export const calculateFinances = (revenues, expenses, commitments, settings) => 
     .filter(e => e.status === 'Pago')
     .reduce((acc, curr) => acc + Number(curr.value), 0);
 
-  const pendingExpenses = expenses
-    .filter(e => e.status === 'Pendente')
+  const cashBalance = realizedRevenue - paidExpenses;
+
+  // --- 2. REGIME DE COMPETÊNCIA (O QUE PERTENCE A ESTE MÊS) ---
+  const totalMonthlyRevenue = revenues
+    .filter(r => {
+      const d = new Date(r.date);
+      return d.getMonth() === currentMonth && d.getFullYear() === currentYear;
+    })
     .reduce((acc, curr) => acc + Number(curr.value), 0);
 
+  const totalFixedCosts = commitments.reduce((acc, curr) => acc + Number(curr.value), 0);
+  
+  const variableExpenses = expenses
+    .filter(e => {
+      const d = new Date(e.date);
+      return d.getMonth() === currentMonth && d.getFullYear() === currentYear;
+    })
+    .reduce((acc, curr) => acc + Number(curr.value), 0);
+
+  const totalExpectedCosts = totalFixedCosts + variableExpenses;
+  const netProfit = totalMonthlyRevenue - totalExpectedCosts;
+
+  // --- 3. ANÁLISE DE SAÚDE E PENDÊNCIAS ---
   const overdueExpenses = expenses
     .filter(e => e.status === 'Pendente' && e.date < todayStr)
     .reduce((acc, curr) => acc + Number(curr.value), 0);
@@ -23,42 +44,45 @@ export const calculateFinances = (revenues, expenses, commitments, settings) => 
     .filter(e => e.status === 'Pendente' && e.date >= todayStr)
     .reduce((acc, curr) => acc + Number(curr.value), 0);
   
-  // Compromissos fixos (templates mensais)
-  const totalFixedCosts = commitments.reduce((acc, curr) => acc + Number(curr.value), 0);
+  // Reserva de Emergência (Prudência: Calculada sobre o faturamento recebido)
+  const emergencyReserve = realizedRevenue * (settings.emergencyReservePercentage / 100);
   
-  // Identifica compromissos que vencem nos próximos 5 dias ou já venceram este mês
-  const urgentCommitments = commitments.filter(c => 
-    c.due_day <= todayDay || (c.due_day <= todayDay + 5)
-  );
+  // Saldo Operacional Livre (O que sobra após prever TODAS as contas do mês e a reserva)
+  const operationalBalance = cashBalance - (totalExpectedCosts - paidExpenses) - emergencyReserve;
 
-  // Reserva de Emergência (sobre o faturamento recebido)
-  const emergencyReserve = received * (settings.emergencyReservePercentage / 100);
-  
-  // Saldo em conta hoje (Líquido disponível)
-  const cashBalance = received - paidExpenses;
+  // Pró-labore Disponível (Limitado pelo lucro real e pelo dinheiro em caixa)
+  const proLaboreCalculated = netProfit > 0 ? netProfit * (settings.withdrawalPercentage / 100) : 0;
+  const proLabore = Math.max(0, Math.min(proLaboreCalculated, operationalBalance));
 
-  // LÓGICA DE SAÚDE FINANCEIRA:
-  // Saldo Operacional Real = Saldo em conta - (Contas Pendentes + Custos Fixos Projetados + Reserva)
-  // Isso garante que você só se pague se o dinheiro "sobrar" de verdade após todas as obrigações conhecidas.
-  const operationalBalance = cashBalance - pendingExpenses - totalFixedCosts - emergencyReserve;
-
-  // Renda Pró-labore = A porcentagem do lucro que o MEI retira para viver
-  const proLabore = Math.max(0, operationalBalance * (settings.withdrawalPercentage / 100));
-
-  // Indicador "Posso me pagar hoje?"
-  const canPayToday = operationalBalance > 0;
+  // --- 4. DADOS PARA O GRÁFICO (FLUXO DIÁRIO) ---
+  const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+  const timelineData = Array.from({ length: Math.ceil(daysInMonth / 5) }, (_, i) => {
+    const dayLimit = (i + 1) * 5;
+    const revUntil = revenues
+      .filter(r => new Date(r.date).getDate() <= dayLimit && r.status === 'Recebido')
+      .reduce((acc, curr) => acc + Number(curr.value), 0);
+    const expUntil = expenses
+      .filter(e => new Date(e.date).getDate() <= dayLimit && e.status === 'Pago')
+      .reduce((acc, curr) => acc + Number(curr.value), 0);
+    
+    return {
+      name: `Dia ${dayLimit}`,
+      receita: revUntil,
+      saldo: revUntil - expUntil
+    };
+  });
 
   return { 
-    received, 
+    realizedRevenue,
     paidExpenses,
-    pendingExpenses,
     overdueExpenses,
     upcomingExpenses,
     cashBalance,
     emergencyReserve, 
     proLabore,
-    canPayToday, 
+    netProfit,
+    canPayToday: operationalBalance > 0 && cashBalance > 0,
     totalFixedCosts,
-    urgentCommitmentsCount: urgentCommitments.length 
+    timelineData
   };
 };
