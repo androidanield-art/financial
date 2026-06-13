@@ -5,7 +5,9 @@ export const calculateFinances = (revenues, expenses, commitments, settings) => 
     .filter(r => r.status === 'Recebido')
     .reduce((acc, curr) => acc + Number(curr.value), 0);
 
-  const paidExpenses = expenses.reduce((acc, curr) => acc + Number(curr.value), 0);
+  const paidExpenses = expenses
+    .filter(e => e.status === 'Pago')
+    .reduce((acc, curr) => acc + Number(curr.value), 0);
   
   // Compromissos fixos (templates mensais)
   const commitmentsTotal = commitments.reduce((acc, curr) => acc + Number(curr.value), 0);
@@ -19,10 +21,12 @@ export const calculateFinances = (revenues, expenses, commitments, settings) => 
 
   // Reserva de Emergência (sobre o faturamento recebido)
   const emergencyReserve = received * (settings.emergencyReservePercentage / 100);
+  
+  // Saldo em conta hoje (Líquido disponível)
+  const cashBalance = received - paidExpenses;
 
   // Saldo Operacional = O que sobra para dividir entre MEI e Empresa
-  // Recebido - Gastos - Fixos - Reserva de Segurança
-  const operationalBalance = received - paidExpenses - totalFixedCosts - emergencyReserve;
+  const operationalBalance = cashBalance - totalFixedCosts - emergencyReserve;
 
   // Renda Pró-labore = A porcentagem do lucro que o MEI retira para viver
   const proLabore = Math.max(0, operationalBalance * (settings.withdrawalPercentage / 100));
@@ -32,7 +36,8 @@ export const calculateFinances = (revenues, expenses, commitments, settings) => 
 
   return { 
     received, 
-    paidExpenses, 
+    paidExpenses,
+    cashBalance,
     emergencyReserve, 
     proLabore,
     canPayToday, 

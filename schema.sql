@@ -31,9 +31,14 @@ CREATE TABLE IF NOT EXISTS public.expenses (
   category TEXT,
   value NUMERIC NOT NULL,
   "date" DATE NOT NULL,
+  status TEXT DEFAULT 'Pendente' CHECK (status IN ('Pendente', 'Pago', 'Cancelado')),
   recurrent BOOLEAN DEFAULT FALSE,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
+
+-- Índices para acelerar o cálculo do saldo no Dashboard
+CREATE INDEX IF NOT EXISTS idx_expenses_user_status ON public.expenses(user_id, status);
+CREATE INDEX IF NOT EXISTS idx_revenues_user_status ON public.revenues(user_id, status);
 
 -- 4. Tabela de Compromissos Fixos
 CREATE TABLE IF NOT EXISTS public.commitments (

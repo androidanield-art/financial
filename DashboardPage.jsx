@@ -9,6 +9,7 @@ const DashboardPage = () => {
   const {
     currentMonthRevenue,
     received,
+    cashBalance,
     paidExpenses,
     netProfit,
     proLabore,
@@ -47,7 +48,7 @@ const DashboardPage = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
         {[
           { label: 'Faturamento', val: currentMonthRevenue, color: 'text-white', icon: ArrowUpRight },
-          { label: 'Em Caixa', val: received, color: 'text-emerald-400', icon: Wallet },
+          { label: 'Em Caixa', val: cashBalance, color: 'text-emerald-400', icon: Wallet },
           { label: 'Gastos + Fixos', val: paidExpenses + totalFixedCosts, color: 'text-rose-400', icon: ArrowDownRight },
           { label: 'Renda Pró-labore', val: proLabore, color: 'text-indigo-400', icon: Target },
         ].map((item, i) => (
