@@ -2,7 +2,7 @@ import React from 'react';
 import { useFinancial } from './FinancialContext';
 import Card from './Card';
 import PaydayIndicator from './PaydayIndicator';
-import { ArrowUpRight, ArrowDownRight, Wallet, Clock, Target } from 'lucide-react';
+import { ArrowUpRight, ArrowDownRight, Wallet, Clock, Target, AlertTriangle } from 'lucide-react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 const DashboardPage = () => {
@@ -12,6 +12,8 @@ const DashboardPage = () => {
     cashBalance,
     paidExpenses,
     pendingExpenses,
+    overdueExpenses,
+    upcomingExpenses,
     netProfit,
     proLabore,
     emergencyReserve,
@@ -46,12 +48,13 @@ const DashboardPage = () => {
         </a>
       </header>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-8">
         {[
           { label: 'Faturamento', val: currentMonthRevenue, color: 'text-white', icon: ArrowUpRight },
           { label: 'Em Caixa (Líquido)', val: cashBalance, color: 'text-emerald-400', icon: Wallet },
           { label: 'Saídas / Gastos', val: paidExpenses, color: 'text-rose-400', icon: ArrowDownRight },
-          { label: 'Contas a Vencer', val: pendingExpenses + totalFixedCosts, color: 'text-amber-400', icon: Clock },
+          { label: 'Contas a Vencer', val: upcomingExpenses + totalFixedCosts, color: 'text-amber-400', icon: Clock },
+          { label: 'Contas Vencidas', val: overdueExpenses, color: 'text-red-500', icon: AlertTriangle },
         ].map((item, i) => (
           <Card key={i} className="relative overflow-hidden group">
             <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:opacity-30 group-hover:scale-125 transition-all duration-700">

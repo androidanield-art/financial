@@ -1,5 +1,7 @@
 export const calculateFinances = (revenues, expenses, commitments, settings) => {
-  const todayDay = new Date().getDate();
+  const now = new Date();
+  const todayDay = now.getDate();
+  const todayStr = now.toISOString().split('T')[0];
 
   const received = revenues
     .filter(r => r.status === 'Recebido')
@@ -11,6 +13,14 @@ export const calculateFinances = (revenues, expenses, commitments, settings) => 
 
   const pendingExpenses = expenses
     .filter(e => e.status === 'Pendente')
+    .reduce((acc, curr) => acc + Number(curr.value), 0);
+
+  const overdueExpenses = expenses
+    .filter(e => e.status === 'Pendente' && e.date < todayStr)
+    .reduce((acc, curr) => acc + Number(curr.value), 0);
+
+  const upcomingExpenses = expenses
+    .filter(e => e.status === 'Pendente' && e.date >= todayStr)
     .reduce((acc, curr) => acc + Number(curr.value), 0);
   
   // Compromissos fixos (templates mensais)
@@ -42,6 +52,8 @@ export const calculateFinances = (revenues, expenses, commitments, settings) => 
     received, 
     paidExpenses,
     pendingExpenses,
+    overdueExpenses,
+    upcomingExpenses,
     cashBalance,
     emergencyReserve, 
     proLabore,
