@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useFinancial } from './FinancialContext';
 import { motion } from 'framer-motion';
-import { Plus, Receipt, Trash2, Tag, RefreshCw, Calendar, Pencil, X } from 'lucide-react';
+import { Plus, Receipt, Trash2, Tag, RefreshCw, Calendar, Pencil, X, CheckCircle2 } from 'lucide-react';
 import Card from './Card';
 
 const ExpensesPage = () => {
@@ -12,7 +12,8 @@ const ExpensesPage = () => {
     category: 'Outros',
     value: '',
     date: new Date().toLocaleDateString('en-CA'), // Formato YYYY-MM-DD estável
-    recurrent: false
+    recurrent: false,
+    status: 'Pendente'
   });
 
   const categories = ['Adobe', 'Internet', 'Aluguel', 'Energia', 'Marketing', 'Equipamentos', 'Impostos', 'Outros'];
@@ -24,7 +25,8 @@ const ExpensesPage = () => {
       category: exp.category,
       value: exp.value,
       date: exp.date.split('T')[0], // Garante que apenas YYYY-MM-DD entre no input
-      recurrent: exp.recurrent || false
+      recurrent: exp.recurrent || false,
+      status: exp.status || 'Pendente'
     });
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -39,7 +41,8 @@ const ExpensesPage = () => {
       category: exp.category,
       value: exp.value,
       date: currentDate.toISOString().split('T')[0],
-      recurrent: true
+      recurrent: true,
+      status: 'Pendente'
     };
     
     addExpense(nextMonthData);
@@ -52,7 +55,8 @@ const ExpensesPage = () => {
       category: 'Outros',
       value: '',
       date: new Date().toLocaleDateString('en-CA'),
-      recurrent: false
+      recurrent: false,
+      status: 'Pendente'
     });
   };
 
@@ -117,6 +121,17 @@ const ExpensesPage = () => {
                   onChange={e => setFormData({...formData, date: e.target.value})}
                 />
               </div>
+              <div className="space-y-1">
+                <label className="text-[10px] font-bold text-slate-500 uppercase ml-1">Status</label>
+                <select 
+                  className="w-full bg-slate-800 border-none rounded-xl p-3 text-white text-sm focus:ring-2 focus:ring-rose-500 outline-none"
+                  value={formData.status}
+                  onChange={e => setFormData({...formData, status: e.target.value})}
+                >
+                  <option value="Pendente">Pendente</option>
+                  <option value="Pago">Pago</option>
+                </select>
+              </div>
               <div className="flex items-center gap-2 p-3 bg-slate-800 rounded-xl">
                 <input 
                   type="checkbox" 
@@ -152,7 +167,7 @@ const ExpensesPage = () => {
               key={exp.id} 
               className="bg-slate-900 border border-white/5 p-4 rounded-2xl flex items-center justify-between group hover:border-rose-500/30 transition-all"
             >
-              <div className="flex items-center gap-4">
+              <div className="flex items-center gap-4 flex-1">
                 <div className="w-10 h-10 rounded-xl bg-rose-500/10 text-rose-500 flex items-center justify-center">
                   <Receipt className="w-5 h-5" />
                 </div>
@@ -177,9 +192,20 @@ const ExpensesPage = () => {
                 <div className="text-right">
                   <p className="text-white font-black text-sm">R$ {Number(exp.value).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</p>
                   <div className="flex items-center justify-end gap-1 text-[10px] text-slate-600 font-bold uppercase">
-                    <Calendar size={10} /> {new Date(exp.date + 'T12:00:00').toLocaleDateString('pt-BR')}
+                    <span className={`px-1.5 py-0.5 rounded ${exp.status === 'Pago' ? 'bg-emerald-500/10 text-emerald-500' : 'bg-rose-500/10 text-rose-500'}`}>
+                      {exp.status}
+                    </span>
                   </div>
                 </div>
+                {exp.status === 'Pendente' && (
+                  <button 
+                    onClick={() => updateExpense(exp.id, { status: 'Pago' })}
+                    className="p-2 text-slate-700 hover:text-emerald-500 transition-colors"
+                    title="Marcar como Pago"
+                  >
+                    <CheckCircle2 size={18} />
+                  </button>
+                )}
                 <button 
                   onClick={() => handleEdit(exp)}
                   className="p-2 text-slate-700 hover:text-indigo-400 transition-colors"
